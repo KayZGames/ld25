@@ -5,18 +5,23 @@ class PlayerControlSystem extends VoidEntitySystem {
   const int FORWARD = 38;
   const int TURN_RIGHT = 37;
   const int TURN_LEFT = 39;
+  const int SHOOT = 32;
   final Map<int, bool> keyPressed = new Map<int, bool>();
 
   Velocity velocity;
   Transform transform;
+  Weapon weapon;
 
   void initialize() {
     TagManager tm = world.getManager(new TagManager().runtimeType);
     Entity player = tm.getEntity(TAG_PLAYER);
-    var vcm = new ComponentMapper<Velocity>(Velocity.type, world);
-    var tcm = new ComponentMapper<Transform>(Transform.type, world);
+    ComponentMapper<Velocity> vcm = new ComponentMapper<Velocity>(Velocity.type, world);
+    ComponentMapper<Transform> tcm = new ComponentMapper<Transform>(Transform.type, world);
+    ComponentMapper<Weapon> wcm = new ComponentMapper<Weapon>(Weapon.type, world);
+
     velocity = vcm.get(player);
     transform = tcm.get(player);
+    weapon = wcm.get(player);
 
     window.on.keyDown.add(handleKeyDown);
     window.on.keyUp.add(handleKeyUp);
@@ -38,6 +43,11 @@ class PlayerControlSystem extends VoidEntitySystem {
     }
     if (keyPressed[TURN_LEFT] == true) {
       transform.orientation += 0.02;
+    }
+    if (keyPressed[SHOOT] == true) {
+      weapon.shoot = true;
+    } else {
+      weapon.shoot = false;
     }
   }
 
@@ -167,6 +177,57 @@ class GravitationSystem extends EntityProcessingSystem {
       v.y -= 0.0005 * world.delta;
     } else {
       v.y *= 0.99;
+    }
+  }
+}
+
+class WeaponFiringSystem extends EntityProcessingSystem {
+  ComponentMapper<Velocity> velocityMapper;
+  ComponentMapper<Transform> transformMapper;
+  ComponentMapper<Weapon> weaponMapper;
+
+  WeaponFiringSystem() : super(Aspect.getAspectForAllOf(Weapon.type, [Transform.type, Velocity.type]));
+
+  void initialize() {
+    velocityMapper = new ComponentMapper<Velocity>(Velocity.type, world);
+    transformMapper = new ComponentMapper<Transform>(Transform.type, world);
+    weaponMapper = new ComponentMapper<Weapon>(Weapon.type, world);
+  }
+
+  void processEntity(Entity e) {
+    Weapon w = weaponMapper.get(e);
+    if (w.canShoot) {
+      w.resetCooldown();
+      Transform t = transformMapper.get(e);
+      Velocity v = velocityMapper.get(e);
+
+      Entity laser = world.createEntity();
+      laser.addComponent(new Transform(t.x, t.y));
+      laser.addComponent(new Velocity(x: v.x+0.5*TrigUtil.sin(t.orientation), y: v.y+0.5*TrigUtil.cos(t.orientation)));
+      laser.addComponent(new Spatial());
+      laser.addComponent(new ExpirationTimer(1000));
+      laser.addToWorld();
+    } else if (w.cooldownTimer > 0){
+      w.cooldownTimer -= world.delta;
+    }
+  }
+}
+
+class ExpirationSystem extends EntityProcessingSystem {
+  ComponentMapper<ExpirationTimer> timerMapper;
+
+  ExpirationSystem() : super(Aspect.getAspectForAllOf(ExpirationTimer.type));
+
+  void initialize() {
+    timerMapper = new ComponentMapper<ExpirationTimer>(ExpirationTimer.type, world);
+  }
+
+  void processEntity(Entity e) {
+    ExpirationTimer timer = timerMapper.get(e);
+    if (timer.expired) {
+      e.deleteFromWorld();
+    } else {
+      timer.expireBy(world.delta);
     }
   }
 }

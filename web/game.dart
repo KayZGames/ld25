@@ -54,6 +54,7 @@ class Game {
     e.addComponent(new Velocity());
     e.addComponent(new Spatial());
     e.addComponent(new Mass());
+    e.addComponent(new Weapon());
     e.addToWorld();
     tm.register(TAG_PLAYER, e);
 
@@ -71,6 +72,8 @@ class Game {
     world.addSystem(new PlayerControlSystem());
     world.addSystem(new GravitationSystem());
     world.addSystem(new MovementSystem());
+    world.addSystem(new ExpirationSystem());
+    world.addSystem(new WeaponFiringSystem());
     world.addSystem(new CameraSystem());
     world.addSystem(new BackgroundRenderingSystem(gameContext));
     world.addSystem(new SpatialRenderingSystem(gameContext));
