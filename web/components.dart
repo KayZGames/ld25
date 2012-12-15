@@ -20,6 +20,8 @@ class Velocity extends Component {
   num x, y;
   num max;
   Velocity({this.x : 0, this.y: 0, this.max: 1});
+
+  double get value => FastMath.sqrt(x * x + y * y);
 }
 
 class Spatial extends Component {

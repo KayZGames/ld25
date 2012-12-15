@@ -30,9 +30,8 @@ class PlayerControlSystem extends VoidEntitySystem {
   void processSystem() {
     if (keyPressed[FORWARD] == true) {
       if (transform.y > 0) {
-        num untilMaxVelocity = velocity.max - FastMath.sqrt(velocity.x * velocity.x + velocity.y * velocity.y);
-        velocity.x += 0.01 * TrigUtil.cos(transform.orientation) * untilMaxVelocity;
-        velocity.y += 0.01 * TrigUtil.sin(transform.orientation) * untilMaxVelocity;
+        num untilMaxVelocity = velocity.max - velocity.value;
+        recalcVelocity(velocity.value + 0.1 * untilMaxVelocity);
       }
     } else {
       velocity.x *= 0.995;
@@ -40,14 +39,25 @@ class PlayerControlSystem extends VoidEntitySystem {
     }
     if (keyPressed[TURN_RIGHT] == true) {
       transform.orientation += 0.02;
+      recalcVelocity(velocity.value);
     }
     if (keyPressed[TURN_LEFT] == true) {
       transform.orientation -= 0.02;
+      recalcVelocity(velocity.value);
     }
     if (keyPressed[SHOOT] == true) {
       weapon.shoot = true;
     } else {
       weapon.shoot = false;
+    }
+  }
+
+  void recalcVelocity(double targetV) {
+    if (transform.y > 0) {
+      double diffX = targetV * TrigUtil.cos(transform.orientation) - velocity.x;
+      double diffY = targetV * TrigUtil.sin(transform.orientation) - velocity.y;
+      velocity.x += diffX * 0.1;
+      velocity.y += diffY * 0.1;
     }
   }
 
@@ -187,11 +197,12 @@ class CameraSystem extends VoidEntitySystem {
   void processSystem() {
     double shift = 0.0;
     if (playerVelocity.x > 0) {
-      shift = 3/8 * MAX_WIDTH * playerVelocity.x / (1 + playerVelocity.x);
+      shift = 3/8 * MAX_WIDTH * (0.2 + playerVelocity.x) / (1 + playerVelocity.x);
     } else if (playerVelocity.x < 0) {
-      shift = - 3/8 * MAX_WIDTH * playerVelocity.x / (-1 + playerVelocity.x);
+      shift = - 3/8 * MAX_WIDTH * (-0.2 + playerVelocity.x) / (-1 + playerVelocity.x);
     }
-    cameraTransform.x = playerTransform.x - (MAX_WIDTH/2 - shift);
+    num diffX = playerTransform.x - (MAX_WIDTH/2 - shift) - cameraTransform.x;
+    cameraTransform.x += 0.08 * diffX;
   }
 }
 
