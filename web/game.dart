@@ -42,10 +42,7 @@ class Game {
 
     createWorld(world);
 
-    world.delta = 16;
-    world.process();
-
-    gameLoop(16);
+    requestRedraw();
   }
 
   void createWorld(World world) {
@@ -96,7 +93,11 @@ class Game {
   }
 
   void gameLoop(num time) {
-    world.delta = time - lastTime;
+    if (lastTime == 0) {
+      world.delta = 16;
+    } else {
+      world.delta = time - lastTime;
+    }
     lastTime = time;
 
     world.process();
