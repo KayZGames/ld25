@@ -4,8 +4,8 @@ class Transform extends Component {
   static Type get type => new Transform._hack().runtimeType;
   Transform._hack();
   num x, y;
-  num orientation = 0;
-  Transform(this.x, this.y);
+  num orientation;
+  Transform(this.x, this.y, {this.orientation : 0});
 }
 
 class Velocity extends Component {

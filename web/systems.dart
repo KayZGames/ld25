@@ -2,10 +2,9 @@ part of game;
 
 class PlayerControlSystem extends VoidEntitySystem {
 
-  const int UP = 38;
-  const int DOWN = 40;
-  const int LEFT = 37;
-  const int RIGHT = 39;
+  const int FORWARD = 38;
+  const int TURN_RIGHT = 37;
+  const int TURN_LEFT = 39;
   final Map<int, bool> keyPressed = new Map<int, bool>();
 
   Velocity velocity;
@@ -24,14 +23,14 @@ class PlayerControlSystem extends VoidEntitySystem {
   }
 
   void processSystem() {
-    if (keyPressed[UP] == true) {
+    if (keyPressed[FORWARD] == true) {
       velocity.value += 0.01;
     }
-    if (keyPressed[LEFT] == true) {
-      transform.orientation += 0.02;
-    }
-    if (keyPressed[RIGHT] == true) {
+    if (keyPressed[TURN_RIGHT] == true) {
       transform.orientation -= 0.02;
+    }
+    if (keyPressed[TURN_LEFT] == true) {
+      transform.orientation += 0.02;
     }
   }
 
@@ -65,18 +64,28 @@ class MovementSystem extends EntityProcessingSystem {
 }
 
 class BackgroundRenderingSystem extends VoidEntitySystem {
+  Transform cameraTransform;
 
   CanvasRenderingContext2D context;
 
   BackgroundRenderingSystem(this.context);
 
+  void initialize() {
+    ComponentMapper<Transform> transformMapper = new ComponentMapper<Transform>(Transform.type, world);
+    TagManager tagManager = world.getManager(new TagManager().runtimeType);
+
+    Entity camera = tagManager.getEntity(TAG_CAMERA);
+
+    cameraTransform = transformMapper.get(camera);
+  }
+
   void processSystem() {
-    context.setTransform(1, 0, 0, 1, 0, 0);
+    context.setTransform(1, 0, 0, -1, 0, 0);
+    context.translate(-cameraTransform.x, -MAX_HEIGHT/2);
     context..fillStyle = "blue"
-        ..fillRect(0, MAX_HEIGHT/2, MAX_WIDTH, MAX_HEIGHT/2)
+        ..fillRect(cameraTransform.x, -MAX_HEIGHT/2, MAX_WIDTH, MAX_HEIGHT/2)
         ..fillStyle = "lightblue"
-        ..fillRect(0, 0, MAX_WIDTH, MAX_HEIGHT/2);
-    context.translate(0, MAX_HEIGHT/2);
+        ..fillRect(cameraTransform.x, 0, MAX_WIDTH, MAX_HEIGHT/2);
   }
 }
 
@@ -99,5 +108,27 @@ class SpatialRenderingSystem extends EntityProcessingSystem {
     context..fillStyle = "grey"
         ..fillRect(t.x, t.y, 5, 5);
 
+  }
+}
+
+class CameraSystem extends VoidEntitySystem {
+  Transform playerTransform;
+  Transform cameraTransform;
+
+  CameraSystem();
+
+  void initialize() {
+    ComponentMapper<Transform> transformMapper = new ComponentMapper<Transform>(Transform.type, world);
+    TagManager tagManager = world.getManager(new TagManager().runtimeType);
+
+    Entity player = tagManager.getEntity(TAG_PLAYER);
+    Entity camera = tagManager.getEntity(TAG_CAMERA);
+
+    playerTransform = transformMapper.get(player);
+    cameraTransform = transformMapper.get(camera);
+  }
+
+  void processSystem() {
+    cameraTransform.x = playerTransform.x - MAX_WIDTH ~/ 8;
   }
 }

@@ -19,6 +19,8 @@ void main() {
 }
 
 const String TAG_PLAYER = "player";
+const String TAG_CAMERA = "camera";
+
 const int MAX_WIDTH = 800;
 const int MAX_HEIGHT = 600;
 
@@ -44,19 +46,30 @@ class Game {
   }
 
   void createWorld(World world) {
+    TagManager tm = new TagManager();
+    world.addManager(tm);
 
     Entity e = world.createEntity();
-    e.addComponent(new Transform(0, 0));
+    e.addComponent(new Transform(0, -MAX_HEIGHT/4, orientation: FastMath.HALF_PI));
     e.addComponent(new Velocity());
     e.addComponent(new Spatial());
     e.addToWorld();
-
-    TagManager tm = new TagManager();
-    world.addManager(tm);
     tm.register(TAG_PLAYER, e);
+
+    e = world.createEntity();
+    e.addComponent(new Transform(0, 0));
+    e.addToWorld();
+    tm.register(TAG_CAMERA, e);
+
+    e = world.createEntity();
+    e.addComponent(new Transform(100, -MAX_HEIGHT/2, orientation: 0));
+    e.addComponent(new Velocity(value: 0.01));
+    e.addComponent(new Spatial());
+    e.addToWorld();
 
     world.addSystem(new PlayerControlSystem());
     world.addSystem(new MovementSystem());
+    world.addSystem(new CameraSystem());
     world.addSystem(new BackgroundRenderingSystem(gameContext));
     world.addSystem(new SpatialRenderingSystem(gameContext));
 
