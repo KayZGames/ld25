@@ -1,14 +1,26 @@
+library game;
+
 import 'dart:html' hide Entity;
 
 import 'package:dartemis/dartemis.dart';
 
+part 'components.dart';
+part 'systems.dart';
 
 void main() {
   CanvasElement gameContainer = query('#gamecontainer');
+  window.requestLayoutFrame(() {
+    gameContainer.width = MAX_WIDTH;
+    gameContainer.height = MAX_HEIGHT;
 
-  Game game = new Game(gameContainer);
-  game.start();
+    Game game = new Game(gameContainer);
+    game.start();
+  });
 }
+
+const String TAG_PLAYER = "player";
+const int MAX_WIDTH = 800;
+const int MAX_HEIGHT = 600;
 
 class Game {
   CanvasElement gameCanvas;
@@ -33,8 +45,20 @@ class Game {
 
   void createWorld(World world) {
 
+    Entity e = world.createEntity();
+    e.addComponent(new Transform(0, 0));
+    e.addComponent(new Velocity());
+    e.addComponent(new Spatial());
+    e.addToWorld();
 
-//    world.addSystem(...);
+    TagManager tm = new TagManager();
+    world.addManager(tm);
+    tm.register(TAG_PLAYER, e);
+
+    world.addSystem(new PlayerControlSystem());
+    world.addSystem(new MovementSystem());
+    world.addSystem(new BackgroundRenderingSystem(gameContext));
+    world.addSystem(new SpatialRenderingSystem(gameContext));
 
     world.initialize();
   }
