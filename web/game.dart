@@ -53,6 +53,7 @@ class Game {
     e.addComponent(new Transform(0, -MAX_HEIGHT/4, orientation: FastMath.HALF_PI));
     e.addComponent(new Velocity());
     e.addComponent(new Spatial());
+    e.addComponent(new Mass());
     e.addToWorld();
     tm.register(TAG_PLAYER, e);
 
@@ -63,11 +64,12 @@ class Game {
 
     e = world.createEntity();
     e.addComponent(new Transform(100, -MAX_HEIGHT/2, orientation: 0));
-    e.addComponent(new Velocity(value: 0.01));
+    e.addComponent(new Velocity(y: 0.01));
     e.addComponent(new Spatial());
     e.addToWorld();
 
     world.addSystem(new PlayerControlSystem());
+    world.addSystem(new GravitationSystem());
     world.addSystem(new MovementSystem());
     world.addSystem(new CameraSystem());
     world.addSystem(new BackgroundRenderingSystem(gameContext));

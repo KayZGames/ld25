@@ -24,7 +24,14 @@ class PlayerControlSystem extends VoidEntitySystem {
 
   void processSystem() {
     if (keyPressed[FORWARD] == true) {
-      velocity.value += 0.01;
+      if (transform.y < 0) {
+        num untilMaxVelocity = velocity.max - FastMath.sqrt(velocity.x * velocity.x + velocity.y * velocity.y);
+        velocity.x += 0.01 * TrigUtil.sin(transform.orientation) * untilMaxVelocity;
+        velocity.y += 0.01 * TrigUtil.cos(transform.orientation) * untilMaxVelocity;
+      }
+    } else {
+      velocity.x *= 0.995;
+      velocity.y *= 0.995;
     }
     if (keyPressed[TURN_RIGHT] == true) {
       transform.orientation -= 0.02;
@@ -58,8 +65,8 @@ class MovementSystem extends EntityProcessingSystem {
     var t = transformMapper.get(e);
     var v = velocityMapper.get(e);
 
-    t.x += world.delta * v.value * TrigUtil.sin(t.orientation);
-    t.y += world.delta * v.value * TrigUtil.cos(t.orientation);
+    t.x += world.delta * v.x;
+    t.y += world.delta * v.y;
   }
 }
 
@@ -113,22 +120,53 @@ class SpatialRenderingSystem extends EntityProcessingSystem {
 
 class CameraSystem extends VoidEntitySystem {
   Transform playerTransform;
+  Velocity playerVelocity;
   Transform cameraTransform;
 
   CameraSystem();
 
   void initialize() {
     ComponentMapper<Transform> transformMapper = new ComponentMapper<Transform>(Transform.type, world);
+    ComponentMapper<Velocity> velocityMapper = new ComponentMapper<Velocity>(Velocity.type, world);
     TagManager tagManager = world.getManager(new TagManager().runtimeType);
 
     Entity player = tagManager.getEntity(TAG_PLAYER);
     Entity camera = tagManager.getEntity(TAG_CAMERA);
 
     playerTransform = transformMapper.get(player);
+    playerVelocity = velocityMapper.get(player);
     cameraTransform = transformMapper.get(camera);
   }
 
   void processSystem() {
-    cameraTransform.x = playerTransform.x - MAX_WIDTH ~/ 8;
+    double shift = 0.0;
+    if (playerVelocity.x > 0) {
+      shift = 3/8 * MAX_WIDTH * playerVelocity.x / (1 + playerVelocity.x);
+    } else if (playerVelocity.x < 0) {
+      shift = - 3/8 * MAX_WIDTH * playerVelocity.x / (-1 + playerVelocity.x);
+    }
+    cameraTransform.x = playerTransform.x - (MAX_WIDTH/2 - shift);
+  }
+}
+
+class GravitationSystem extends EntityProcessingSystem {
+  ComponentMapper<Velocity> velocityMapper;
+  ComponentMapper<Transform> transformMapper;
+
+  GravitationSystem() : super(Aspect.getAspectForAllOf(Mass.type, [Velocity.type, Transform.type]));
+
+  void initialize() {
+    velocityMapper = new ComponentMapper<Velocity>(Velocity.type, world);
+    transformMapper = new ComponentMapper<Transform>(Transform.type, world);
+  }
+
+  void processEntity(Entity e) {
+    var t = transformMapper.get(e);
+    var v = velocityMapper.get(e);
+    if (t.y > 0) {
+      v.y -= 0.0005 * world.delta;
+    } else {
+      v.y *= 0.99;
+    }
   }
 }
