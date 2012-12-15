@@ -137,7 +137,7 @@ class SpatialRenderingSystem extends EntityProcessingSystem {
       drawSpatial(s, x, y, orientation);
     } else {
       int minFactor = (cameraTransform.x ~/ t.repeatsEveryX).toInt() - 1;
-      int maxFactor = ((cameraTransform.x+MAX_WIDTH) ~/ t.repeatsEveryX).toInt();
+      int maxFactor = ((cameraTransform.x+MAX_WIDTH) ~/ t.repeatsEveryX).toInt() + 1;
       for (int i = minFactor; i < maxFactor; i++) {
         num offsetX = i * t.repeatsEveryX + x;
         drawSpatial(s, offsetX, y, orientation);

@@ -64,9 +64,20 @@ class Game {
     tm.register(TAG_CAMERA, e);
 
     e = world.createEntity();
-    e.addComponent(new Transform(100, MAX_HEIGHT/2, orientation: FastMath.HALF_PI, repeatsEveryX: 100));
+    e.addComponent(new Transform(47, MAX_HEIGHT/2, repeatsEveryX: 97));
+    e.addComponent(new Spatial(name: 'plant.png'));
+    e.addToWorld();
+
+    e = world.createEntity();
+    e.addComponent(new Transform(101, MAX_HEIGHT/2, orientation: FastMath.HALF_PI, repeatsEveryX: 253));
     e.addComponent(new Velocity(y: -0.01));
-    e.addComponent(new Spatial());
+    e.addComponent(new Spatial(name: 'bubble.png'));
+    e.addToWorld();
+
+    e = world.createEntity();
+    e.addComponent(new Transform(51, MAX_HEIGHT/2, orientation: FastMath.HALF_PI, repeatsEveryX: 357));
+    e.addComponent(new Velocity(y: -0.01));
+    e.addComponent(new Spatial(name: 'bubble.png'));
     e.addToWorld();
 
     world.addSystem(new PlayerControlSystem());
@@ -97,7 +108,7 @@ class Game {
 }
 
 void loadImages() {
-  List<String> images = ['shark.png', 'laser.png'];
+  List<String> images = ['shark.png', 'laser.png', 'bubble.png', 'plant.png'];
   images.forEach((image) => ImageCache.withImage(image, (element) {}));
 }
 
