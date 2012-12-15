@@ -64,7 +64,7 @@ class Game {
     tm.register(TAG_CAMERA, e);
 
     e = world.createEntity();
-    e.addComponent(new Transform(100, MAX_HEIGHT/2, orientation: FastMath.HALF_PI));
+    e.addComponent(new Transform(100, MAX_HEIGHT/2, orientation: FastMath.HALF_PI, repeatsEveryX: 100));
     e.addComponent(new Velocity(y: -0.01));
     e.addComponent(new Spatial());
     e.addToWorld();

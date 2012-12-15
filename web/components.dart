@@ -5,7 +5,8 @@ class Transform extends Component {
   Transform._hack();
   num x, y;
   double _orientation;
-  Transform(this.x, this.y, {num orientation : 0}) {
+  int repeatsEveryX;
+  Transform(this.x, this.y, {num orientation : 0, this.repeatsEveryX: 0}) {
     _orientation = orientation.toDouble() % FastMath.PI;
   }
 

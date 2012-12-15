@@ -112,33 +112,55 @@ class SpatialRenderingSystem extends EntityProcessingSystem {
   ComponentMapper<Transform> transformMapper;
   ComponentMapper<Spatial> spatialMapper;
 
+  Transform cameraTransform;
+
   SpatialRenderingSystem(this.context) : super(Aspect.getAspectForAllOf(Spatial.type, [Transform.type]));
 
   void initialize() {
     transformMapper = new ComponentMapper<Transform>(Transform.type, world);
     spatialMapper = new ComponentMapper<Spatial>(Spatial.type, world);
+
+    TagManager tagManager = world.getManager(new TagManager().runtimeType);
+    Entity camera = tagManager.getEntity(TAG_CAMERA);
+    cameraTransform = transformMapper.get(camera);
   }
 
   void processEntity(Entity e) {
     Transform t = transformMapper.get(e);
     Spatial s = spatialMapper.get(e);
 
+    num x = t.x;
+    num y = t.y;
+    double orientation = t.orientation;
+
+    if (t.repeatsEveryX == 0) {
+      drawSpatial(s, x, y, orientation);
+    } else {
+      int minFactor = (cameraTransform.x ~/ t.repeatsEveryX).toInt() - 1;
+      int maxFactor = ((cameraTransform.x+MAX_WIDTH) ~/ t.repeatsEveryX).toInt();
+      for (int i = minFactor; i < maxFactor; i++) {
+        num offsetX = i * t.repeatsEveryX + x;
+        drawSpatial(s, offsetX, y, orientation);
+      }
+    }
+  }
+
+  void drawSpatial(Spatial s, num x, num y, double orientation) {
     if (null == s.name) {
       context..fillStyle = "grey"
-        ..fillRect(t.x, t.y, 5, 5);
+          ..fillRect(x, y, 5, 5);
     } else {
       ImageCache.withImage(s.name, (image) {
         context.save();
         try {
-          context.translate(t.x, t.y);
-          context.rotate(t.orientation);
+          context.translate(x, y);
+          context.rotate(orientation);
           context.drawImage(image, -image.width/2, -image.height/2, image.width, image.height);
         } finally {
           context.restore();
         }
       });
     }
-
   }
 }
 
