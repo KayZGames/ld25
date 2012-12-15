@@ -50,9 +50,9 @@ class Game {
     world.addManager(tm);
 
     Entity e = world.createEntity();
-    e.addComponent(new Transform(0, -MAX_HEIGHT/4, orientation: FastMath.HALF_PI));
+    e.addComponent(new Transform(0, MAX_HEIGHT/4, orientation: 0));
     e.addComponent(new Velocity());
-    e.addComponent(new Spatial());
+    e.addComponent(new Spatial(name: "shark.png"));
     e.addComponent(new Mass());
     e.addComponent(new Weapon());
     e.addToWorld();
@@ -64,8 +64,8 @@ class Game {
     tm.register(TAG_CAMERA, e);
 
     e = world.createEntity();
-    e.addComponent(new Transform(100, -MAX_HEIGHT/2, orientation: 0));
-    e.addComponent(new Velocity(y: 0.01));
+    e.addComponent(new Transform(100, MAX_HEIGHT/2, orientation: FastMath.HALF_PI));
+    e.addComponent(new Velocity(y: -0.01));
     e.addComponent(new Spatial());
     e.addToWorld();
 
@@ -93,5 +93,28 @@ class Game {
 
   void requestRedraw() {
     window.requestAnimationFrame(gameLoop);
+  }
+}
+
+void loadImages() {
+  List<String> images = ['shark.png', 'laser.png'];
+  images.forEach((image) => ImageCache.withImage(image, (element) {}));
+}
+
+class ImageCache {
+  static final Map<String, ImageElement> loadedImages = new Map<String, ImageElement>();
+
+  static void withImage(String imageName, void action(ImageElement image)) {
+    ImageElement image = loadedImages[imageName];
+    if (null == image) {
+      image = new ImageElement();
+      image.on.load.add((event) {
+        action(image);
+        loadedImages[imageName] = image;
+      });
+      image.src = "res/img/${imageName}";
+    } else {
+      action(image);
+    }
   }
 }

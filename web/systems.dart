@@ -3,8 +3,8 @@ part of game;
 class PlayerControlSystem extends VoidEntitySystem {
 
   const int FORWARD = 38;
-  const int TURN_RIGHT = 37;
-  const int TURN_LEFT = 39;
+  const int TURN_LEFT= 37;
+  const int TURN_RIGHT = 39;
   const int SHOOT = 32;
   final Map<int, bool> keyPressed = new Map<int, bool>();
 
@@ -29,20 +29,20 @@ class PlayerControlSystem extends VoidEntitySystem {
 
   void processSystem() {
     if (keyPressed[FORWARD] == true) {
-      if (transform.y < 0) {
+      if (transform.y > 0) {
         num untilMaxVelocity = velocity.max - FastMath.sqrt(velocity.x * velocity.x + velocity.y * velocity.y);
-        velocity.x += 0.01 * TrigUtil.sin(transform.orientation) * untilMaxVelocity;
-        velocity.y += 0.01 * TrigUtil.cos(transform.orientation) * untilMaxVelocity;
+        velocity.x += 0.01 * TrigUtil.cos(transform.orientation) * untilMaxVelocity;
+        velocity.y += 0.01 * TrigUtil.sin(transform.orientation) * untilMaxVelocity;
       }
     } else {
       velocity.x *= 0.995;
       velocity.y *= 0.995;
     }
     if (keyPressed[TURN_RIGHT] == true) {
-      transform.orientation -= 0.02;
+      transform.orientation += 0.02;
     }
     if (keyPressed[TURN_LEFT] == true) {
-      transform.orientation += 0.02;
+      transform.orientation -= 0.02;
     }
     if (keyPressed[SHOOT] == true) {
       weapon.shoot = true;
@@ -97,12 +97,12 @@ class BackgroundRenderingSystem extends VoidEntitySystem {
   }
 
   void processSystem() {
-    context.setTransform(1, 0, 0, -1, 0, 0);
-    context.translate(-cameraTransform.x, -MAX_HEIGHT/2);
+    context.setTransform(1, 0, 0, 1, 0, 0);
+    context.translate(-cameraTransform.x, MAX_HEIGHT/2);
     context..fillStyle = "blue"
-        ..fillRect(cameraTransform.x, -MAX_HEIGHT/2, MAX_WIDTH, MAX_HEIGHT/2)
+        ..fillRect(cameraTransform.x, 0, MAX_WIDTH, MAX_HEIGHT/2)
         ..fillStyle = "lightblue"
-        ..fillRect(cameraTransform.x, 0, MAX_WIDTH, MAX_HEIGHT/2);
+        ..fillRect(cameraTransform.x, -MAX_HEIGHT/2, MAX_WIDTH, MAX_HEIGHT/2);
   }
 }
 
@@ -121,9 +121,23 @@ class SpatialRenderingSystem extends EntityProcessingSystem {
 
   void processEntity(Entity e) {
     Transform t = transformMapper.get(e);
+    Spatial s = spatialMapper.get(e);
 
-    context..fillStyle = "grey"
+    if (null == s.name) {
+      context..fillStyle = "grey"
         ..fillRect(t.x, t.y, 5, 5);
+    } else {
+      ImageCache.withImage(s.name, (image) {
+        context.save();
+        try {
+          context.translate(t.x, t.y);
+          context.rotate(t.orientation);
+          context.drawImage(image, -image.width/2, -image.height/2, image.width, image.height);
+        } finally {
+          context.restore();
+        }
+      });
+    }
 
   }
 }
@@ -173,8 +187,8 @@ class GravitationSystem extends EntityProcessingSystem {
   void processEntity(Entity e) {
     var t = transformMapper.get(e);
     var v = velocityMapper.get(e);
-    if (t.y > 0) {
-      v.y -= 0.0005 * world.delta;
+    if (t.y < 0) {
+      v.y += 0.0005 * world.delta;
     } else {
       v.y *= 0.99;
     }
@@ -202,9 +216,11 @@ class WeaponFiringSystem extends EntityProcessingSystem {
       Velocity v = velocityMapper.get(e);
 
       Entity laser = world.createEntity();
-      laser.addComponent(new Transform(t.x, t.y));
-      laser.addComponent(new Velocity(x: v.x+0.5*TrigUtil.sin(t.orientation), y: v.y+0.5*TrigUtil.cos(t.orientation)));
-      laser.addComponent(new Spatial());
+      double offsetX = 13 * TrigUtil.sin(t.orientation) + 17 * TrigUtil.cos(t.orientation);
+      double offsetY = - 13 * TrigUtil.cos(t.orientation) + 17 * TrigUtil.sin(t.orientation);
+      laser.addComponent(new Transform(t.x + offsetX , t.y + offsetY, orientation: t.orientation) );
+      laser.addComponent(new Velocity(x: v.x + 0.5*TrigUtil.cos(t.orientation), y: v.y+0.5*TrigUtil.sin(t.orientation)));
+      laser.addComponent(new Spatial(name: 'laser.png'));
       laser.addComponent(new ExpirationTimer(1000));
       laser.addToWorld();
     } else if (w.cooldownTimer > 0){

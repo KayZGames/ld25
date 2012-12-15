@@ -24,7 +24,8 @@ class Velocity extends Component {
 class Spatial extends Component {
   static Type get type => new Spatial._hack().runtimeType;
   Spatial._hack();
-  Spatial();
+  String name;
+  Spatial({this.name});
 }
 
 class Mass extends Component {
