@@ -71,3 +71,10 @@ class ExpirationTimer extends Component {
   }
   bool get expired => timeLeft <= 0;
 }
+
+class TeleportsOnTarget extends Component {
+  static Type get type => new TeleportsOnTarget._hack().runtimeType;
+  TeleportsOnTarget._hack();
+  int y, by;
+  TeleportsOnTarget(this.y, this.by);
+}

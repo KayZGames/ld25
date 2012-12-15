@@ -269,3 +269,25 @@ class ExpirationSystem extends EntityProcessingSystem {
     }
   }
 }
+
+class EntityTeleportationSystem extends EntityProcessingSystem {
+  ComponentMapper<Transform> transformMapper;
+  ComponentMapper<TeleportsOnTarget> teleportMapper;
+
+  EntityTeleportationSystem() : super(Aspect.getAspectForAllOf(TeleportsOnTarget.type, [Transform.type]));
+
+  void initialize() {
+    transformMapper = new ComponentMapper<Transform>(Transform.type, world);
+    teleportMapper = new ComponentMapper<TeleportsOnTarget>(TeleportsOnTarget.type, world);
+  }
+
+  void processEntity(Entity e) {
+    Transform transform = transformMapper.get(e);
+    TeleportsOnTarget teleport = teleportMapper.get(e);
+
+    if (teleport.y > transform.y) {
+      transform.y += teleport.by;
+    }
+  }
+
+}

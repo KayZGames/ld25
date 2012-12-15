@@ -1,6 +1,7 @@
 library game;
 
 import 'dart:html' hide Entity;
+import 'dart:math';
 
 import 'package:dartemis/dartemis.dart';
 
@@ -23,6 +24,8 @@ const String TAG_CAMERA = "camera";
 
 const int MAX_WIDTH = 800;
 const int MAX_HEIGHT = 600;
+
+final Random random = new Random();
 
 class Game {
   CanvasElement gameCanvas;
@@ -63,26 +66,26 @@ class Game {
     e.addToWorld();
     tm.register(TAG_CAMERA, e);
 
-    e = world.createEntity();
-    e.addComponent(new Transform(47, MAX_HEIGHT/2, repeatsEveryX: 97));
-    e.addComponent(new Spatial(name: 'plant.png'));
-    e.addToWorld();
+    for (int i =0; i < 10; i++) {
+      e = world.createEntity();
+      e.addComponent(new Transform(random.nextInt(MAX_WIDTH), MAX_HEIGHT/2, repeatsEveryX: MAX_WIDTH + random.nextInt(MAX_WIDTH)));
+      e.addComponent(new Spatial(name: 'plant.png'));
+      e.addToWorld();
+    }
 
-    e = world.createEntity();
-    e.addComponent(new Transform(101, MAX_HEIGHT/2, orientation: FastMath.HALF_PI, repeatsEveryX: 253));
-    e.addComponent(new Velocity(y: -0.01));
-    e.addComponent(new Spatial(name: 'bubble.png'));
-    e.addToWorld();
-
-    e = world.createEntity();
-    e.addComponent(new Transform(51, MAX_HEIGHT/2, orientation: FastMath.HALF_PI, repeatsEveryX: 357));
-    e.addComponent(new Velocity(y: -0.01));
-    e.addComponent(new Spatial(name: 'bubble.png'));
-    e.addToWorld();
+    for (int i =0; i < 20; i++) {
+      e = world.createEntity();
+      e.addComponent(new Transform(random.nextInt(MAX_WIDTH), random.nextInt(MAX_HEIGHT), orientation: FastMath.HALF_PI, repeatsEveryX: MAX_WIDTH + random.nextInt(MAX_WIDTH)));
+      e.addComponent(new Velocity(y: -0.005 - random.nextDouble() * 0.01));
+      e.addComponent(new Spatial(name: 'bubble.png'));
+      e.addComponent(new TeleportsOnTarget(0, MAX_HEIGHT));
+      e.addToWorld();
+    }
 
     world.addSystem(new PlayerControlSystem());
     world.addSystem(new GravitationSystem());
     world.addSystem(new MovementSystem());
+    world.addSystem(new EntityTeleportationSystem());
     world.addSystem(new ExpirationSystem());
     world.addSystem(new WeaponFiringSystem());
     world.addSystem(new CameraSystem());
