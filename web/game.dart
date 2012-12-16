@@ -63,6 +63,12 @@ class Game {
     e.addToWorld();
     tm.register(TAG_CAMERA, e);
 
+    e = world.createEntity();
+    e.addComponent(new Transform(0, - 3 * MAX_HEIGHT/8, orientation: 0));
+    e.addComponent(new Velocity(x: 0.5));
+    e.addComponent(new Spatial(name: 'airplane.png'));
+    e.addToWorld();
+
     for (int i =0; i < 10; i++) {
       e = world.createEntity();
       e.addComponent(new Transform(random.nextInt(MAX_WIDTH), MAX_HEIGHT/2, repeatsEveryX: MAX_WIDTH + random.nextInt(MAX_WIDTH)));
@@ -78,6 +84,7 @@ class Game {
       e.addComponent(new TeleportsOnTarget(0, MAX_HEIGHT));
       e.addToWorld();
     }
+
 
     world.addSystem(new PlayerControlSystem());
     world.addSystem(new GravitationSystem());
@@ -112,7 +119,7 @@ class Game {
 }
 
 void loadImages() {
-  List<String> images = ['shark.png', 'laser.png', 'bubble.png', 'plant.png'];
+  List<String> images = ['shark.png', 'laser.png', 'bubble.png', 'plant.png', 'airplane.png'];
   images.forEach((image) => ImageCache.withImage(image, (element) {}));
 }
 
