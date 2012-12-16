@@ -49,19 +49,7 @@ class Game {
     TagManager tm = new TagManager();
     world.addManager(tm);
 
-    Entity e = world.createEntity();
-    e.addComponent(new Transform(0, MAX_HEIGHT/4, orientation: 0));
-    e.addComponent(new Velocity());
-    e.addComponent(new Spatial(name: "shark.png"));
-    e.addComponent(new Mass());
-    e.addComponent(new Weapon());
-    e.addToWorld();
-    tm.register(TAG_PLAYER, e);
-
-    e = world.createEntity();
-    e.addComponent(new Transform(0, 0));
-    e.addToWorld();
-    tm.register(TAG_CAMERA, e);
+    Entity e;
 
     e = world.createEntity();
     e.addComponent(new Transform(0, - 3 * MAX_HEIGHT/8, orientation: 0));
@@ -85,6 +73,19 @@ class Game {
       e.addToWorld();
     }
 
+    e = world.createEntity();
+    e.addComponent(new Transform(0, MAX_HEIGHT/4, orientation: 0));
+    e.addComponent(new Velocity());
+    e.addComponent(new Spatial(name: "shark.png"));
+    e.addComponent(new Mass());
+    e.addComponent(new Weapon(cooldownTime: 500));
+    e.addToWorld();
+    tm.register(TAG_PLAYER, e);
+
+    e = world.createEntity();
+    e.addComponent(new Transform(0, 0));
+    e.addToWorld();
+    tm.register(TAG_CAMERA, e);
 
     world.addSystem(new PlayerControlSystem());
     world.addSystem(new GravitationSystem());

@@ -252,7 +252,7 @@ class WeaponFiringSystem extends EntityProcessingSystem {
       double offsetX = 13 * TrigUtil.sin(t.orientation) + 17 * TrigUtil.cos(t.orientation);
       double offsetY = - 13 * TrigUtil.cos(t.orientation) + 17 * TrigUtil.sin(t.orientation);
       laser.addComponent(new Transform(t.x + offsetX , t.y + offsetY, orientation: t.orientation) );
-      laser.addComponent(new Velocity(x: v.x + 0.5*TrigUtil.cos(t.orientation), y: v.y+0.5*TrigUtil.sin(t.orientation)));
+      laser.addComponent(new Velocity(x: 2 * TrigUtil.cos(t.orientation), y: 2 * TrigUtil.sin(t.orientation)));
       laser.addComponent(new Spatial(name: 'laser.png'));
       laser.addComponent(new ExpirationTimer(1000));
       laser.addToWorld();
