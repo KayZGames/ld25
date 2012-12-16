@@ -116,6 +116,21 @@ class BackgroundRenderingSystem extends VoidEntitySystem {
   }
 }
 
+class ForegroundRenderingSystem extends BackgroundRenderingSystem {
+  ForegroundRenderingSystem(context) : super(context);
+
+  void processSystem() {
+    context.save();
+    try {
+      context.globalAlpha = 0.25;
+      context..fillStyle = "blue"
+          ..fillRect(cameraTransform.x, 0, MAX_WIDTH, MAX_HEIGHT/2);;
+    } finally {
+      context.restore();
+    }
+  }
+}
+
 class SpatialRenderingSystem extends EntityProcessingSystem {
   CanvasRenderingContext2D context;
 

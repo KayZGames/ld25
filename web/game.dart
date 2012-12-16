@@ -96,6 +96,7 @@ class Game {
     world.addSystem(new CameraSystem());
     world.addSystem(new BackgroundRenderingSystem(gameContext));
     world.addSystem(new SpatialRenderingSystem(gameContext));
+    world.addSystem(new ForegroundRenderingSystem(gameContext));
 
     world.initialize();
   }
