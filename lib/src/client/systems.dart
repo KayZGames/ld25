@@ -2,10 +2,12 @@ part of client;
 
 class PlayerControlSystem extends VoidEntitySystem {
 
-  static const int FORWARD = 38;
-  static const int TURN_LEFT= 37;
-  static const int TURN_RIGHT = 39;
-  static const int SHOOT = 32;
+  static const int FORWARD = KeyCode.UP;
+  static const int TURN_LEFT= KeyCode.LEFT;
+  static const int TURN_RIGHT = KeyCode.RIGHT;
+  static const int SHOOT = KeyCode.SPACE;
+  static const int PAUSE1 = KeyCode.PAUSE;
+  static const int PAUSE2 = KeyCode.P;
   final Map<int, bool> keyPressed = new Map<int, bool>();
 
   Velocity velocity;
@@ -50,6 +52,9 @@ class PlayerControlSystem extends VoidEntitySystem {
     } else {
       weapon.shoot = false;
     }
+    if (keyPressed[PAUSE1] == true || keyPressed[PAUSE2] == true) {
+      state.paused = true;
+    }
   }
 
   void recalcVelocity(double targetV) {
@@ -68,6 +73,8 @@ class PlayerControlSystem extends VoidEntitySystem {
   void handleKeyUp(KeyboardEvent e) {
     keyPressed[e.keyCode] = false;
   }
+
+  bool checkProcessing() => super.checkProcessing() && state.running;
 }
 
 class MovementSystem extends EntityProcessingSystem {
@@ -88,6 +95,8 @@ class MovementSystem extends EntityProcessingSystem {
     t.x += world.delta * v.x;
     t.y += world.delta * v.y;
   }
+
+  bool checkProcessing() => super.checkProcessing() && state.running;
 }
 
 class BackgroundRenderingSystem extends VoidEntitySystem {
@@ -219,6 +228,8 @@ class CameraSystem extends VoidEntitySystem {
     num diffX = playerTransform.x - (MAX_WIDTH/2 - shift) - cameraTransform.x;
     cameraTransform.x += 0.08 * diffX;
   }
+
+  bool checkProcessing() => super.checkProcessing() && state.running;
 }
 
 class GravitationSystem extends EntityProcessingSystem {
@@ -241,6 +252,8 @@ class GravitationSystem extends EntityProcessingSystem {
       v.y *= 0.99;
     }
   }
+
+  bool checkProcessing() => super.checkProcessing() && state.running;
 }
 
 class WeaponFiringSystem extends EntityProcessingSystem {
@@ -275,6 +288,8 @@ class WeaponFiringSystem extends EntityProcessingSystem {
       w.cooldownTimer -= world.delta;
     }
   }
+
+  bool checkProcessing() => super.checkProcessing() && state.running;
 }
 
 class ExpirationSystem extends EntityProcessingSystem {
@@ -294,6 +309,8 @@ class ExpirationSystem extends EntityProcessingSystem {
       timer.expireBy(world.delta);
     }
   }
+
+  bool checkProcessing() => super.checkProcessing() && state.running;
 }
 
 class EntityTeleportationSystem extends EntityProcessingSystem {
@@ -315,4 +332,67 @@ class EntityTeleportationSystem extends EntityProcessingSystem {
       transform.y += teleport.by;
     }
   }
+
+  bool checkProcessing() => super.checkProcessing() && state.running;
+}
+
+class BufferToCanvasSystem extends VoidEntitySystem {
+  CanvasElement buffer;
+  CanvasRenderingContext2D ctx;
+
+  BufferToCanvasSystem(this.buffer, this.ctx);
+
+  void processSystem() {
+    ctx.drawImage(buffer, 0, 0);
+  }
+}
+
+class MenuSystem extends VoidEntitySystem {
+  CanvasElement canvas;
+  CanvasRenderingContext2D ctx;
+  CanvasQuery startMenu, pauseMenu;
+  MenuSystem(CanvasElement canvas) : canvas = canvas,
+                                                 ctx = canvas.context2D;
+
+  void initialize() {
+    startMenu = _createMenu('Start');
+    pauseMenu = _createMenu('Resume');
+    var button = _getButton();
+    cq(canvas).framework.onMouseDown.listen((event) {
+      if (button.containsPoint(event.position)) {
+        state.started = true;
+        state.paused = false;
+      }
+    });
+  }
+
+  CanvasQuery _createMenu(String buttonText) {
+    var menu = cq(MAX_WIDTH, MAX_HEIGHT);
+    menu..textBaseline = 'top'
+        ..font = '12px Verdana';
+    var bounds = menu.textBoundaries(buttonText);
+    var button = _getButton();
+    menu..roundRect(20, 20, MAX_WIDTH - 40, MAX_HEIGHT - 40, 20, strokeStyle: 'black', fillStyle: 'blue')
+        ..roundRect(button.left, button.top, button.width, button.height, 10, strokeStyle: 'red', fillStyle: 'green')
+        ..fillText(buttonText, MAX_WIDTH ~/ 2 - bounds.width ~/ 2, MAX_HEIGHT ~/2 - bounds.height ~/ 2);
+    return menu;
+  }
+
+  Rectangle _getButton() {
+    var buttonLeft = MAX_WIDTH ~/ 2 - 50;
+    var buttonTop = MAX_HEIGHT ~/2 - 15;
+    var buttonWidth = 100;
+    var buttonHeight = 30;
+    return new Rectangle(buttonLeft, buttonTop, buttonWidth, buttonHeight);
+  }
+
+  void processSystem() {
+    if (state.paused) {
+      ctx.drawImage(pauseMenu.canvas, 0, 0);
+    } else {
+      ctx.drawImage(startMenu.canvas, 0, 0);
+    }
+  }
+
+  bool checkProcessing() => super.checkProcessing() && !state.running;
 }

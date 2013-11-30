@@ -24,6 +24,10 @@ packages:
     description: browser
     source: hosted
     version: "0.9.0"
+  canvas_query:
+    description: canvas_query
+    source: hosted
+    version: "0.2.1"
   crypto:
     description: crypto
     source: hosted
@@ -35,7 +39,7 @@ packages:
   gamedev_helpers:
     description:
       ref: null
-      resolved-ref: "82ff98313cd24b852f81df767ed7713d65f28bfc"
+      resolved-ref: d20c18747dfad4cce98308e353d569e7afc3ad88
       url: "https://github.com/denniskaselow/gamedev_helpers"
     source: git
     version: "0.0.0"

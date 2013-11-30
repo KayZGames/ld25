@@ -10,6 +10,9 @@ void main() => new Game().start();
 final Random random = new Random();
 
 class Game extends GameBase {
+  CanvasElement buffer;
+  CanvasRenderingContext2D bufferCtx;
+
   Game() : super('ld25', '#gamecontainer', MAX_WIDTH, MAX_HEIGHT);
 
   void createEntities() {
@@ -52,16 +55,19 @@ class Game extends GameBase {
             new ExpirationSystem(),
             new WeaponFiringSystem(),
             new CameraSystem(),
-            new BackgroundRenderingSystem(canvas.context2D),
-            new SpatialRenderingSystem(canvas.context2D, spriteSheet),
-            new ForegroundRenderingSystem(canvas.context2D)
+            new BackgroundRenderingSystem(bufferCtx),
+            new SpatialRenderingSystem(bufferCtx, spriteSheet),
+            new ForegroundRenderingSystem(bufferCtx),
+            new BufferToCanvasSystem(buffer, ctx),
+            new MenuSystem(canvas)
       ];
   }
 
   void onInit() {
     world.addManager(new TagManager());
+    buffer = new CanvasElement(width: MAX_WIDTH, height: MAX_HEIGHT);
+    bufferCtx = buffer.context2D;
   }
 
   void onInitDone() {}
 }
-

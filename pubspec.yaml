@@ -3,8 +3,9 @@ description: Entry to the Ludum Dare 25 - You are the Villain
 author: Dennis Kaselow <Dennis.Kaselow+ld25@gmail.com>
 homepage: https://github.com/denniskaselow/ld25
 dependencies:
-  dartemis: any
   browser: any
+  canvas_query: any
+  dartemis: any
   gamedev_helpers:
     git: https://github.com/denniskaselow/gamedev_helpers
 #    path: ../gamedev_helpers

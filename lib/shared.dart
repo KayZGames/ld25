@@ -12,3 +12,11 @@ const String TAG_CAMERA = "camera";
 
 const int MAX_WIDTH = 800;
 const int MAX_HEIGHT = 600;
+
+GameState state = new GameState();
+
+class GameState {
+  bool started = false;
+  bool paused = false;
+  bool get running => started && !paused;
+}
