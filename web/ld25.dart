@@ -59,6 +59,7 @@ class Game extends GameBase {
             new SpatialRenderingSystem(bufferCtx, spriteSheet),
             new ForegroundRenderingSystem(bufferCtx),
             new BufferToCanvasSystem(buffer, ctx),
+            new SoundSystem(helper.audioHelper),
             new MenuSystem(canvas)
       ];
   }
@@ -67,6 +68,8 @@ class Game extends GameBase {
     world.addManager(new TagManager());
     buffer = new CanvasElement(width: MAX_WIDTH, height: MAX_HEIGHT);
     bufferCtx = buffer.context2D;
+
+    helper.audioHelper.loadAudioClips(['laser_shoot']);
   }
 
   void onInitDone() {}

@@ -284,6 +284,9 @@ class WeaponFiringSystem extends EntityProcessingSystem {
       laser.addComponent(new Spatial(name: 'laser.png'));
       laser.addComponent(new ExpirationTimer(1000));
       laser.addToWorld();
+      Entity laserSound = world.createEntity();
+      laserSound.addComponent(new Sound('laser_shoot'));
+      laserSound.addToWorld();
     } else if (w.cooldownTimer > 0){
       w.cooldownTimer -= world.delta;
     }
