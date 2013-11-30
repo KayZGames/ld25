@@ -1,4 +1,4 @@
-part of game;
+part of shared;
 
 class Transform extends Component {
   static Type get type => new Transform._hack().runtimeType;
@@ -21,7 +21,7 @@ class Velocity extends Component {
   num max;
   Velocity({this.x : 0, this.y: 0, this.max: 1});
 
-  double get value => FastMath.sqrt(x * x + y * y);
+  double get value => sqrt(x * x + y * y);
 }
 
 class Spatial extends Component {

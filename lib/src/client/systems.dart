@@ -1,11 +1,11 @@
-part of game;
+part of client;
 
 class PlayerControlSystem extends VoidEntitySystem {
 
-  const int FORWARD = 38;
-  const int TURN_LEFT= 37;
-  const int TURN_RIGHT = 39;
-  const int SHOOT = 32;
+  static const int FORWARD = 38;
+  static const int TURN_LEFT= 37;
+  static const int TURN_RIGHT = 39;
+  static const int SHOOT = 32;
   final Map<int, bool> keyPressed = new Map<int, bool>();
 
   Velocity velocity;
@@ -15,16 +15,16 @@ class PlayerControlSystem extends VoidEntitySystem {
   void initialize() {
     TagManager tm = world.getManager(new TagManager().runtimeType);
     Entity player = tm.getEntity(TAG_PLAYER);
-    ComponentMapper<Velocity> vcm = new ComponentMapper<Velocity>(Velocity.type, world);
-    ComponentMapper<Transform> tcm = new ComponentMapper<Transform>(Transform.type, world);
-    ComponentMapper<Weapon> wcm = new ComponentMapper<Weapon>(Weapon.type, world);
+    ComponentMapper<Velocity> vcm = new ComponentMapper<Velocity>(Velocity, world);
+    ComponentMapper<Transform> tcm = new ComponentMapper<Transform>(Transform, world);
+    ComponentMapper<Weapon> wcm = new ComponentMapper<Weapon>(Weapon, world);
 
     velocity = vcm.get(player);
     transform = tcm.get(player);
     weapon = wcm.get(player);
 
-    window.on.keyDown.add(handleKeyDown);
-    window.on.keyUp.add(handleKeyUp);
+    window.onKeyDown.listen(handleKeyDown);
+    window.onKeyUp.listen(handleKeyUp);
   }
 
   void processSystem() {
@@ -54,8 +54,8 @@ class PlayerControlSystem extends VoidEntitySystem {
 
   void recalcVelocity(double targetV) {
     if (transform.y > 0) {
-      double diffX = targetV * TrigUtil.cos(transform.orientation) - velocity.x;
-      double diffY = targetV * TrigUtil.sin(transform.orientation) - velocity.y;
+      double diffX = targetV * FastMath.cos(transform.orientation) - velocity.x;
+      double diffY = targetV * FastMath.sin(transform.orientation) - velocity.y;
       velocity.x += diffX * 0.1;
       velocity.y += diffY * 0.1;
     }
@@ -74,11 +74,11 @@ class MovementSystem extends EntityProcessingSystem {
   ComponentMapper<Transform> transformMapper;
   ComponentMapper<Velocity> velocityMapper;
 
-  MovementSystem() : super(Aspect.getAspectForAllOf(Transform.type, [Velocity.type]));
+  MovementSystem() : super(Aspect.getAspectForAllOf([Transform, Velocity]));
 
   void initialize() {
-    transformMapper = new ComponentMapper<Transform>(Transform.type, world);
-    velocityMapper = new ComponentMapper<Velocity>(Velocity.type, world);
+    transformMapper = new ComponentMapper<Transform>(Transform, world);
+    velocityMapper = new ComponentMapper<Velocity>(Velocity, world);
   }
 
   void processEntity(Entity e) {
@@ -99,7 +99,7 @@ class BackgroundRenderingSystem extends VoidEntitySystem {
 
   void initialize() {
     ComponentMapper<Transform> transformMapper = new ComponentMapper<Transform>(Transform.type, world);
-    TagManager tagManager = world.getManager(new TagManager().runtimeType);
+    TagManager tagManager = world.getManager(TagManager);
 
     Entity camera = tagManager.getEntity(TAG_CAMERA);
 
@@ -139,13 +139,13 @@ class SpatialRenderingSystem extends EntityProcessingSystem {
 
   Transform cameraTransform;
 
-  SpatialRenderingSystem(this.context) : super(Aspect.getAspectForAllOf(Spatial.type, [Transform.type]));
+  SpatialRenderingSystem(this.context) : super(Aspect.getAspectForAllOf([Spatial, Transform]));
 
   void initialize() {
-    transformMapper = new ComponentMapper<Transform>(Transform.type, world);
-    spatialMapper = new ComponentMapper<Spatial>(Spatial.type, world);
+    transformMapper = new ComponentMapper<Transform>(Transform, world);
+    spatialMapper = new ComponentMapper<Spatial>(Spatial, world);
 
-    TagManager tagManager = world.getManager(new TagManager().runtimeType);
+    TagManager tagManager = world.getManager(TagManager);
     Entity camera = tagManager.getEntity(TAG_CAMERA);
     cameraTransform = transformMapper.get(camera);
   }
@@ -180,7 +180,7 @@ class SpatialRenderingSystem extends EntityProcessingSystem {
         try {
           context.translate(x, y);
           context.rotate(orientation);
-          context.drawImage(image, -image.width/2, -image.height/2, image.width, image.height);
+          context.drawImageScaled(image, -image.width/2, -image.height/2, image.width, image.height);
         } finally {
           context.restore();
         }
@@ -225,11 +225,11 @@ class GravitationSystem extends EntityProcessingSystem {
   ComponentMapper<Velocity> velocityMapper;
   ComponentMapper<Transform> transformMapper;
 
-  GravitationSystem() : super(Aspect.getAspectForAllOf(Mass.type, [Velocity.type, Transform.type]));
+  GravitationSystem() : super(Aspect.getAspectForAllOf([Mass, Velocity, Transform]));
 
   void initialize() {
-    velocityMapper = new ComponentMapper<Velocity>(Velocity.type, world);
-    transformMapper = new ComponentMapper<Transform>(Transform.type, world);
+    velocityMapper = new ComponentMapper<Velocity>(Velocity, world);
+    transformMapper = new ComponentMapper<Transform>(Transform, world);
   }
 
   void processEntity(Entity e) {
@@ -248,12 +248,12 @@ class WeaponFiringSystem extends EntityProcessingSystem {
   ComponentMapper<Transform> transformMapper;
   ComponentMapper<Weapon> weaponMapper;
 
-  WeaponFiringSystem() : super(Aspect.getAspectForAllOf(Weapon.type, [Transform.type, Velocity.type]));
+  WeaponFiringSystem() : super(Aspect.getAspectForAllOf([Weapon, Transform, Velocity]));
 
   void initialize() {
-    velocityMapper = new ComponentMapper<Velocity>(Velocity.type, world);
-    transformMapper = new ComponentMapper<Transform>(Transform.type, world);
-    weaponMapper = new ComponentMapper<Weapon>(Weapon.type, world);
+    velocityMapper = new ComponentMapper<Velocity>(Velocity, world);
+    transformMapper = new ComponentMapper<Transform>(Transform, world);
+    weaponMapper = new ComponentMapper<Weapon>(Weapon, world);
   }
 
   void processEntity(Entity e) {
@@ -264,10 +264,10 @@ class WeaponFiringSystem extends EntityProcessingSystem {
       Velocity v = velocityMapper.get(e);
 
       Entity laser = world.createEntity();
-      double offsetX = 13 * TrigUtil.sin(t.orientation) + 17 * TrigUtil.cos(t.orientation);
-      double offsetY = - 13 * TrigUtil.cos(t.orientation) + 17 * TrigUtil.sin(t.orientation);
+      double offsetX = 13 * FastMath.sin(t.orientation) + 17 * FastMath.cos(t.orientation);
+      double offsetY = - 13 * FastMath.cos(t.orientation) + 17 * FastMath.sin(t.orientation);
       laser.addComponent(new Transform(t.x + offsetX , t.y + offsetY, orientation: t.orientation) );
-      laser.addComponent(new Velocity(x: 2 * TrigUtil.cos(t.orientation), y: 2 * TrigUtil.sin(t.orientation)));
+      laser.addComponent(new Velocity(x: 2 * FastMath.cos(t.orientation), y: 2 * FastMath.sin(t.orientation)));
       laser.addComponent(new Spatial(name: 'laser.png'));
       laser.addComponent(new ExpirationTimer(1000));
       laser.addToWorld();
@@ -280,10 +280,10 @@ class WeaponFiringSystem extends EntityProcessingSystem {
 class ExpirationSystem extends EntityProcessingSystem {
   ComponentMapper<ExpirationTimer> timerMapper;
 
-  ExpirationSystem() : super(Aspect.getAspectForAllOf(ExpirationTimer.type));
+  ExpirationSystem() : super(Aspect.getAspectForAllOf([ExpirationTimer]));
 
   void initialize() {
-    timerMapper = new ComponentMapper<ExpirationTimer>(ExpirationTimer.type, world);
+    timerMapper = new ComponentMapper<ExpirationTimer>(ExpirationTimer, world);
   }
 
   void processEntity(Entity e) {
@@ -300,11 +300,11 @@ class EntityTeleportationSystem extends EntityProcessingSystem {
   ComponentMapper<Transform> transformMapper;
   ComponentMapper<TeleportsOnTarget> teleportMapper;
 
-  EntityTeleportationSystem() : super(Aspect.getAspectForAllOf(TeleportsOnTarget.type, [Transform.type]));
+  EntityTeleportationSystem() : super(Aspect.getAspectForAllOf([TeleportsOnTarget, Transform]));
 
   void initialize() {
-    transformMapper = new ComponentMapper<Transform>(Transform.type, world);
-    teleportMapper = new ComponentMapper<TeleportsOnTarget>(TeleportsOnTarget.type, world);
+    transformMapper = new ComponentMapper<Transform>(Transform, world);
+    teleportMapper = new ComponentMapper<TeleportsOnTarget>(TeleportsOnTarget, world);
   }
 
   void processEntity(Entity e) {
@@ -316,4 +316,27 @@ class EntityTeleportationSystem extends EntityProcessingSystem {
     }
   }
 
+}
+
+void loadImages() {
+  List<String> images = ['shark.png', 'laser.png', 'bubble.png', 'plant.png', 'airplane.png'];
+  images.forEach((image) => ImageCache.withImage(image, (element) {}));
+}
+
+class ImageCache {
+  static final Map<String, ImageElement> loadedImages = new Map<String, ImageElement>();
+
+  static void withImage(String imageName, void action(ImageElement image)) {
+    ImageElement image = loadedImages[imageName];
+    if (null == image) {
+      image = new ImageElement();
+      image.onLoad.listen((event) {
+        action(image);
+        loadedImages[imageName] = image;
+      });
+      image.src = "../res/img/${imageName}";
+    } else {
+      action(image);
+    }
+  }
 }

@@ -4,26 +4,16 @@ import 'dart:html' hide Entity;
 import 'dart:math';
 
 import 'package:dartemis/dartemis.dart';
-
-part 'components.dart';
-part 'systems.dart';
+import 'package:ld25/client.dart';
 
 void main() {
-  CanvasElement gameContainer = query('#gamecontainer');
-  window.requestLayoutFrame(() {
-    gameContainer.width = MAX_WIDTH;
-    gameContainer.height = MAX_HEIGHT;
+  CanvasElement gameContainer = querySelector('#gamecontainer');
+  gameContainer.width = MAX_WIDTH;
+  gameContainer.height = MAX_HEIGHT;
 
-    Game game = new Game(gameContainer);
-    game.start();
-  });
+  Game game = new Game(gameContainer);
+  game.start();
 }
-
-const String TAG_PLAYER = "player";
-const String TAG_CAMERA = "camera";
-
-const int MAX_WIDTH = 800;
-const int MAX_HEIGHT = 600;
 
 final Random random = new Random();
 
@@ -34,7 +24,7 @@ class Game {
   num lastTime = 0;
 
   Game(this.gameCanvas) {
-    gameContext = gameCanvas.context2d;
+    gameContext = gameCanvas.context2D;
   }
 
   void start() {
@@ -80,12 +70,12 @@ class Game {
     e.addComponent(new Mass());
     e.addComponent(new Weapon(cooldownTime: 500));
     e.addToWorld();
-    tm.register(TAG_PLAYER, e);
+    tm.register(e, TAG_PLAYER);
 
     e = world.createEntity();
     e.addComponent(new Transform(0, 0));
     e.addToWorld();
-    tm.register(TAG_CAMERA, e);
+    tm.register(e, TAG_CAMERA);
 
     world.addSystem(new PlayerControlSystem());
     world.addSystem(new GravitationSystem());
@@ -120,25 +110,3 @@ class Game {
   }
 }
 
-void loadImages() {
-  List<String> images = ['shark.png', 'laser.png', 'bubble.png', 'plant.png', 'airplane.png'];
-  images.forEach((image) => ImageCache.withImage(image, (element) {}));
-}
-
-class ImageCache {
-  static final Map<String, ImageElement> loadedImages = new Map<String, ImageElement>();
-
-  static void withImage(String imageName, void action(ImageElement image)) {
-    ImageElement image = loadedImages[imageName];
-    if (null == image) {
-      image = new ImageElement();
-      image.on.load.add((event) {
-        action(image);
-        loadedImages[imageName] = image;
-      });
-      image.src = "res/img/${imageName}";
-    } else {
-      action(image);
-    }
-  }
-}
