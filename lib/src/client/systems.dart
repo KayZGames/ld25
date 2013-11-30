@@ -133,13 +133,14 @@ class ForegroundRenderingSystem extends BackgroundRenderingSystem {
 
 class SpatialRenderingSystem extends EntityProcessingSystem {
   CanvasRenderingContext2D context;
+  SpriteSheet spriteSheet;
 
   ComponentMapper<Transform> transformMapper;
   ComponentMapper<Spatial> spatialMapper;
 
   Transform cameraTransform;
 
-  SpatialRenderingSystem(this.context) : super(Aspect.getAspectForAllOf([Spatial, Transform]));
+  SpatialRenderingSystem(this.context, this.spriteSheet) : super(Aspect.getAspectForAllOf([Spatial, Transform]));
 
   void initialize() {
     transformMapper = new ComponentMapper<Transform>(Transform, world);
@@ -175,16 +176,15 @@ class SpatialRenderingSystem extends EntityProcessingSystem {
       context..fillStyle = "grey"
           ..fillRect(x, y, 5, 5);
     } else {
-      ImageCache.withImage(s.name, (image) {
-        context.save();
-        try {
-          context.translate(x, y);
-          context.rotate(orientation);
-          context.drawImageScaled(image, -image.width/2, -image.height/2, image.width, image.height);
-        } finally {
-          context.restore();
-        }
-      });
+      context.save();
+      try {
+        context.translate(x, y);
+        context.rotate(orientation);
+        var sprite = spriteSheet[s.name];
+        context.drawImageToRect(spriteSheet.image, sprite.dst, sourceRect: sprite.src);
+      } finally {
+        context.restore();
+      }
     }
   }
 }
@@ -313,30 +313,6 @@ class EntityTeleportationSystem extends EntityProcessingSystem {
 
     if (teleport.y > transform.y) {
       transform.y += teleport.by;
-    }
-  }
-
-}
-
-void loadImages() {
-  List<String> images = ['shark.png', 'laser.png', 'bubble.png', 'plant.png', 'airplane.png'];
-  images.forEach((image) => ImageCache.withImage(image, (element) {}));
-}
-
-class ImageCache {
-  static final Map<String, ImageElement> loadedImages = new Map<String, ImageElement>();
-
-  static void withImage(String imageName, void action(ImageElement image)) {
-    ImageElement image = loadedImages[imageName];
-    if (null == image) {
-      image = new ImageElement();
-      image.onLoad.listen((event) {
-        action(image);
-        loadedImages[imageName] = image;
-      });
-      image.src = "../res/img/${imageName}";
-    } else {
-      action(image);
     }
   }
 }

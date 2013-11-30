@@ -1,0 +1,52 @@
+{"frames": {
+
+"airplane.png":
+{
+	"frame": {"x":0,"y":0,"w":180,"h":60},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":16,"y":10,"w":180,"h":60},
+	"sourceSize": {"w":200,"h":100}
+},
+"bubble.png":
+{
+	"frame": {"x":0,"y":108,"w":6,"h":6},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":6,"h":6},
+	"sourceSize": {"w":6,"h":6}
+},
+"laser.png":
+{
+	"frame": {"x":0,"y":114,"w":23,"h":2},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":23,"h":2},
+	"sourceSize": {"w":23,"h":2}
+},
+"plant.png":
+{
+	"frame": {"x":92,"y":60,"w":14,"h":36},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":4,"y":4,"w":14,"h":36},
+	"sourceSize": {"w":20,"h":40}
+},
+"shark.png":
+{
+	"frame": {"x":0,"y":60,"w":92,"h":48},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":5,"y":0,"w":92,"h":48},
+	"sourceSize": {"w":100,"h":50}
+}},
+"meta": {
+	"app": "http://www.codeandweb.com/texturepacker ",
+	"version": "1.0",
+	"image": "assets.png",
+	"format": "RGBA8888",
+	"size": {"w":256,"h":128},
+	"scale": "1",
+	"smartupdate": "$TexturePacker:SmartUpdate:90e1c755fb5a7675e3fb8ac311ce9546:949f0a09c923721e8ca34a260c30e0a4:a759b6bbc8381ac9c472b28f589ad0d6$"
+}
+}
