@@ -14,6 +14,12 @@ const String TAG_CAMERA = "camera";
 const int MAX_WIDTH = 800;
 const int MAX_HEIGHT = 600;
 
+const String PLAYER_HUMAN = 'human';
+const String PLAYER_COMPUTER = 'computer';
+
+const String GROUP_HUMAN_WEAPON = 'human_bullet';
+const String GROUP_COMPUTER_WEAPON = 'computer_bullet';
+
 final Random random = new Random();
 
 GameState state = new GameState();

@@ -1,7 +1,5 @@
 library game;
 
-import 'dart:math';
-
 import 'package:dartemis/dartemis.dart';
 import 'package:ld25/client.dart';
 
@@ -15,6 +13,7 @@ class Game extends GameBase {
 
   void createEntities() {
     TagManager tm = world.getManager(TagManager);
+    PlayerManager pm = world.getManager(PlayerManager);
 
     for (int i =0; i < 10; i++) {
       addEntity([new Transform(random.nextInt(MAX_WIDTH), MAX_HEIGHT/2, repeatsEveryX: MAX_WIDTH + random.nextInt(MAX_WIDTH)),
@@ -35,6 +34,7 @@ class Game extends GameBase {
                           new BodyDef('shark'),
                           new Weapon(cooldownTime: 500)]);
     tm.register(e, TAG_PLAYER);
+    pm.setPlayer(e, PLAYER_HUMAN);
 
     e = addEntity([new Transform(0, 0)]);
     tm.register(e, TAG_CAMERA);
@@ -52,7 +52,8 @@ class Game extends GameBase {
             new EntityTeleportationSystem(),
             new ExpirationSystem(),
             new WeaponFiringSystem(),
-            new CollisionDetectionSystem(bodyDefs),
+            new ComputerCollisionDetectionSystem(bodyDefs),
+            new HumanCollisionDetectionSystem(bodyDefs),
             new DestroyOnCollisionSystem(),
             new DamageToHealthSystem(),
             new ExplosionOnCollisionSystem(),
@@ -75,6 +76,8 @@ class Game extends GameBase {
 
   void onInit() {
     world.addManager(new TagManager());
+    world.addManager(new PlayerManager());
+    world.addManager(new GroupManager());
     buffer = new CanvasElement(width: MAX_WIDTH, height: MAX_HEIGHT);
     bufferCtx = buffer.context2D;
 

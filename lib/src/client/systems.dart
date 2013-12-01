@@ -84,6 +84,8 @@ class WeaponFiringSystem extends EntityProcessingSystem {
   ComponentMapper<Velocity> velocityMapper;
   ComponentMapper<Transform> transformMapper;
   ComponentMapper<Weapon> weaponMapper;
+  PlayerManager pm;
+  GroupManager gm;
 
   WeaponFiringSystem() : super(Aspect.getAspectForAllOf([Weapon, Transform, Velocity]));
 
@@ -91,6 +93,8 @@ class WeaponFiringSystem extends EntityProcessingSystem {
     velocityMapper = new ComponentMapper<Velocity>(Velocity, world);
     transformMapper = new ComponentMapper<Transform>(Transform, world);
     weaponMapper = new ComponentMapper<Weapon>(Weapon, world);
+    pm = world.getManager(PlayerManager);
+    gm = world.getManager(GroupManager);
   }
 
   void processEntity(Entity e) {
@@ -112,6 +116,7 @@ class WeaponFiringSystem extends EntityProcessingSystem {
       laser.addComponent(new DestroyOnCollision());
       laser.addComponent(new DamageOnCollision(w.bulletDamage));
       laser.addToWorld();
+      gm.add(laser, '${pm.getPlayer(e)}_bullet');
       Entity laserSound = world.createEntity();
       laserSound.addComponent(new Sound('laser_shoot'));
       laserSound.addToWorld();

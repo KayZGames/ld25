@@ -2,18 +2,21 @@ part of client;
 
 abstract class Spawner extends VoidEntitySystem {
   Transform pt;
+  PlayerManager pm;
 
   void initialize() {
     TagManager tag = world.getManager(new TagManager().runtimeType);
     Entity player = tag.getEntity(TAG_PLAYER);
     var tm = new ComponentMapper<Transform>(Transform, world);
     pt = tm.get(player);
+    pm = world.getManager(PlayerManager);
   }
 
   Entity addEntity(List<Component> components) {
     var entity = world.createEntity();
     components.forEach((component) => entity.addComponent(component));
     entity.addToWorld();
+    pm.setPlayer(entity, PLAYER_COMPUTER);
     return entity;
   }
 

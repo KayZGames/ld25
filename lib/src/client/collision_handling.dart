@@ -1,19 +1,24 @@
 part of client;
 
 
-class CollisionDetectionSystem extends EntitySystem {
+abstract class CollisionDetectionSystem extends VoidEntitySystem {
   ComponentMapper<Transform> tm;
   ComponentMapper<BodyDef> bm;
   ComponentMapper<DamageOnCollision> docm;
   Map<String, List<Polygon>> bodyDefs;
   bool collisions = false;
 
-  CollisionDetectionSystem(this.bodyDefs) : super(Aspect.getAspectForAllOf([Transform, BodyDef]));
+  PlayerManager pm;
+  GroupManager gm;
+
+  CollisionDetectionSystem(this.bodyDefs);
 
   void initialize() {
     tm = new ComponentMapper<Transform>(Transform, world);
     bm = new ComponentMapper<BodyDef>(BodyDef, world);
     docm = new ComponentMapper<DamageOnCollision>(DamageOnCollision, world);
+    pm = world.getManager(PlayerManager);
+    gm = world.getManager(GroupManager);
   }
 
   void begin() {
@@ -26,16 +31,16 @@ class CollisionDetectionSystem extends EntitySystem {
     }
   }
 
-  void processEntities(ReadOnlyBag<Entity> entities) {
-    int size = entities.size;
+  void processCollisions(ReadOnlyBag<Entity> units, ReadOnlyBag<Entity> bullets) {
+    int size = units.size;
     if (size > 1) {
-      for (int i = 0; i < entities.size - 1; i++) {
-        for (int j = i + 1; j < entities.size; j++) {
-          var entity1 = entities[i];
-          var entity2 = entities[j];
+      for (int i = 0; i < units.size; i++) {
+        for (int j = 0; j < bullets.size; j++) {
+          var unit = units[i];
+          var bullet = bullets[j];
 
-          var t1 = tm.get(entity1);
-          var t2 = tm.get(entity2);
+          var t1 = tm.get(unit);
+          var t2 = tm.get(bullet);
 
           var pos1 = t1.position;
           var pos2 = t2.position;
@@ -43,19 +48,19 @@ class CollisionDetectionSystem extends EntitySystem {
           var rotation1 = t1.rotation;
           var rotation2 = t2.rotation;
 
-          var bodyId1 = bm.get(entity1).bodyId;
-          var bodyId2 = bm.get(entity2).bodyId;
+          var bodyId1 = bm.get(unit).bodyId;
+          var bodyId2 = bm.get(bullet).bodyId;
 
           var shapes1 = bodyDefs[bodyId1];
           var shapes2 = bodyDefs[bodyId2];
 
           if (doShapesCollide(shapes1, pos1, rotation1, shapes2, pos2, rotation2)) {
-            entity1.addComponent(new Collision(pos2.x, pos2.y));
-            entity2.addComponent(new Collision(pos1.x, pos1.y));
-            transferDamage(entity1, entity2);
-            transferDamage(entity2, entity1);
-            entity1.changedInWorld();
-            entity2.changedInWorld();
+            unit.addComponent(new Collision(pos2.x, pos2.y));
+            bullet.addComponent(new Collision(pos1.x, pos1.y));
+            transferDamage(unit, bullet);
+            transferDamage(bullet, unit);
+            unit.changedInWorld();
+            bullet.changedInWorld();
             collisions = true;
           }
         }
@@ -126,6 +131,26 @@ class CollisionDetectionSystem extends EntitySystem {
   }
 
   bool checkProcessing() => true;
+}
+
+class ComputerCollisionDetectionSystem extends CollisionDetectionSystem {
+  ComputerCollisionDetectionSystem(Map<String, List<Polygon>> bodyDefs) : super(bodyDefs);
+
+  void processSystem() {
+    var units = pm.getEntitiesOfPlayer(PLAYER_COMPUTER);
+    var bullets = gm.getEntities(GROUP_HUMAN_WEAPON);
+    processCollisions(units, bullets);
+  }
+}
+
+class HumanCollisionDetectionSystem extends CollisionDetectionSystem {
+  HumanCollisionDetectionSystem(Map<String, List<Polygon>> bodyDefs) : super(bodyDefs);
+
+  void processSystem() {
+    var units = pm.getEntitiesOfPlayer(PLAYER_HUMAN);
+    var bullets = gm.getEntities(GROUP_COMPUTER_WEAPON);
+    processCollisions(units, bullets);
+  }
 }
 
 class DestroyOnCollisionSystem extends EntityProcessingSystem {
