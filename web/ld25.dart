@@ -16,47 +16,6 @@ class Game extends GameBase {
   void createEntities() {
     TagManager tm = world.getManager(TagManager);
 
-    addEntity([new Transform(0, - 3 * MAX_HEIGHT/8, orientation: 0),
-               new Velocity(x: 0.3 + random.nextDouble() * 0.4),
-               new Spatial(name: 'airplane.png'),
-               new BodyDef('airplane'),
-               new Health(10),
-               new BodyCount(150),
-               new ExplosionOnCollision('impact', 1),
-               new ExplosionOnDestruction('explosion', 4),
-               new ImpactOnCollision()]);
-
-    addEntity([new Transform(0, - 2 * MAX_HEIGHT/8, orientation: 0),
-               new Velocity(x: 0.4 + random.nextDouble() * 0.5),
-               new Spatial(name: 'jet.png'),
-               new BodyDef('jet'),
-               new Health(2),
-               new BodyCount(2),
-               new ExplosionOnCollision('impact', 1),
-               new ExplosionOnDestruction('explosion', 2),
-               new ImpactOnCollision()]);
-
-    addEntity([new Transform(0, -10, orientation: 0),
-               new Velocity(x: 0.2 + random.nextDouble() * 0.3),
-               new Spatial(name: 'battleship.png'),
-               new BodyDef('battleship'),
-               new Health(12),
-               new BodyCount(100),
-               new ExplosionOnCollision('impact', 1),
-               new ExplosionOnDestruction('explosion', 5),
-               new ImpactOnCollision()]);
-
-    addEntity([new Transform(0, 2 * MAX_HEIGHT/8, orientation: 0),
-               new Velocity(x: 0.2 + random.nextDouble() * 0.4),
-               new Spatial(name: 'submarine.png'),
-               new BodyDef('submarine'),
-               new Health(8),
-               new BodyCount(50),
-               new ExplosionOnCollision('impact', 1),
-               new ExplosionOnDestruction('explosion', 4),
-               new ImpactOnCollision()]);
-
-
     for (int i =0; i < 10; i++) {
       addEntity([new Transform(random.nextInt(MAX_WIDTH), MAX_HEIGHT/2, repeatsEveryX: MAX_WIDTH + random.nextInt(MAX_WIDTH)),
                  new Spatial(name: 'plant.png')]);
@@ -84,6 +43,10 @@ class Game extends GameBase {
   List<EntitySystem> getSystems() {
     return [
             new PlayerControlSystem(),
+            new AirplaneSpawner(),
+            new SubmarineSpawner(),
+            new JetSpawner(),
+            new BattleshipSpawner(),
             new GravitationSystem(),
             new MovementSystem(),
             new EntityTeleportationSystem(),
@@ -105,7 +68,8 @@ class Game extends GameBase {
             new HudRenderingSystem(ctx),
             new SoundSystem(helper.audioHelper),
             new MenuSystem(canvas),
-            new CollisionCleanupSystem()
+            new CollisionCleanupSystem(),
+            new DisappearsOutOfRangeSystem()
       ];
   }
 

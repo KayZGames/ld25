@@ -139,3 +139,5 @@ class ExplosionOnCollision extends ExplosionOnEvent {
 class ExplosionOnDestruction extends ExplosionOnEvent {
   ExplosionOnDestruction(String effect, int explosions) : super(effect, explosions);
 }
+
+class DisappearsOutOfRange extends Component {}
