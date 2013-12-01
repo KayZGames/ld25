@@ -81,7 +81,7 @@ class Game extends GameBase {
     buffer = new CanvasElement(width: MAX_WIDTH, height: MAX_HEIGHT);
     bufferCtx = buffer.context2D;
 
-    helper.audioHelper.loadAudioClips(['laser_shoot', 'bubble_burst']);
+    helper.audioHelper.loadAudioClips(['laser_shoot', 'bubble_burst', 'bullet_hit', 'explosion']);
   }
 
   void onInitDone() {}

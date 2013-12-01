@@ -196,6 +196,9 @@ class ExplosionOnCollisionSystem extends EntityProcessingSystem {
       explosion.addComponent(new ExpirationTimer(50 + random.nextDouble() * 150));
       explosion.addToWorld();
     }
+    var explosion = world.createEntity();
+    explosion.addComponent(new Sound('bullet_hit'));
+    explosion.addToWorld();
   }
 }
 
@@ -233,5 +236,8 @@ class ExplosionOnDestructionSystem extends EntityProcessingSystem {
       explosion.addComponent(new ExpirationTimer(50 + random.nextDouble() * 250));
       explosion.addToWorld();
     }
+    var explosion = world.createEntity();
+    explosion.addComponent(new Sound('explosion'));
+    explosion.addToWorld();
   }
 }

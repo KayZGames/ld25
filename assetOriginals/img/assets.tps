@@ -204,6 +204,70 @@
             <filename>jet.png</filename>
             <filename>submarine.png</filename>
             <filename>battleship.png</filename>
+            <filename>explosion_0.png</filename>
+            <filename>explosion_1.png</filename>
+            <filename>explosion_2.png</filename>
+            <filename>explosion_3.png</filename>
+            <filename>impact_0.png</filename>
+            <filename>impact_1.png</filename>
+            <filename>impact_2.png</filename>
+            <filename>impact_3.png</filename>
+            <filename>explosion_0.png</filename>
+            <filename>explosion_1.png</filename>
+            <filename>explosion_2.png</filename>
+            <filename>explosion_3.png</filename>
+            <filename>impact_0.png</filename>
+            <filename>impact_1.png</filename>
+            <filename>impact_2.png</filename>
+            <filename>impact_3.png</filename>
+            <filename>explosion_0.png</filename>
+            <filename>explosion_1.png</filename>
+            <filename>explosion_2.png</filename>
+            <filename>explosion_3.png</filename>
+            <filename>impact_0.png</filename>
+            <filename>impact_1.png</filename>
+            <filename>impact_2.png</filename>
+            <filename>impact_3.png</filename>
+            <filename>explosion_0.png</filename>
+            <filename>explosion_1.png</filename>
+            <filename>explosion_2.png</filename>
+            <filename>explosion_3.png</filename>
+            <filename>impact_0.png</filename>
+            <filename>impact_1.png</filename>
+            <filename>impact_2.png</filename>
+            <filename>impact_3.png</filename>
+            <filename>explosion_0.png</filename>
+            <filename>explosion_1.png</filename>
+            <filename>explosion_2.png</filename>
+            <filename>explosion_3.png</filename>
+            <filename>impact_0.png</filename>
+            <filename>impact_1.png</filename>
+            <filename>impact_2.png</filename>
+            <filename>impact_3.png</filename>
+            <filename>explosion_0.png</filename>
+            <filename>explosion_1.png</filename>
+            <filename>explosion_2.png</filename>
+            <filename>explosion_3.png</filename>
+            <filename>impact_0.png</filename>
+            <filename>impact_1.png</filename>
+            <filename>impact_2.png</filename>
+            <filename>impact_3.png</filename>
+            <filename>explosion_0.png</filename>
+            <filename>explosion_1.png</filename>
+            <filename>explosion_2.png</filename>
+            <filename>explosion_3.png</filename>
+            <filename>impact_0.png</filename>
+            <filename>impact_1.png</filename>
+            <filename>impact_2.png</filename>
+            <filename>impact_3.png</filename>
+            <filename>explosion_0.png</filename>
+            <filename>explosion_1.png</filename>
+            <filename>explosion_2.png</filename>
+            <filename>explosion_3.png</filename>
+            <filename>impact_0.png</filename>
+            <filename>impact_1.png</filename>
+            <filename>impact_2.png</filename>
+            <filename>impact_3.png</filename>
         </array>
         <key>ignoreFileList</key>
         <array/>
