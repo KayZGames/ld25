@@ -1,0 +1,140 @@
+{"frames": {
+
+"airplane.png":
+{
+	"frame": {"x":2,"y":2,"w":179,"h":59},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":179,"h":59},
+	"sourceSize": {"w":179,"h":59}
+},
+"battleship.png":
+{
+	"frame": {"x":104,"y":253,"w":100,"h":44},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":100,"h":44},
+	"sourceSize": {"w":100,"h":44}
+},
+"bubble.png":
+{
+	"frame": {"x":221,"y":24,"w":6,"h":6},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":6,"h":6},
+	"sourceSize": {"w":6,"h":6}
+},
+"explosion_0.png":
+{
+	"frame": {"x":2,"y":204,"w":100,"h":84},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":100,"h":84},
+	"sourceSize": {"w":100,"h":84}
+},
+"explosion_1.png":
+{
+	"frame": {"x":104,"y":166,"w":100,"h":85},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":100,"h":85},
+	"sourceSize": {"w":100,"h":85}
+},
+"explosion_2.png":
+{
+	"frame": {"x":2,"y":106,"w":100,"h":96},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":100,"h":96},
+	"sourceSize": {"w":100,"h":96}
+},
+"explosion_3.png":
+{
+	"frame": {"x":132,"y":63,"w":100,"h":101},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":100,"h":101},
+	"sourceSize": {"w":100,"h":101}
+},
+"impact_0.png":
+{
+	"frame": {"x":230,"y":21,"w":20,"h":17},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":20,"h":17},
+	"sourceSize": {"w":20,"h":17}
+},
+"impact_1.png":
+{
+	"frame": {"x":230,"y":2,"w":20,"h":17},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":20,"h":17},
+	"sourceSize": {"w":20,"h":17}
+},
+"impact_2.png":
+{
+	"frame": {"x":183,"y":6,"w":20,"h":19},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":20,"h":19},
+	"sourceSize": {"w":20,"h":19}
+},
+"impact_3.png":
+{
+	"frame": {"x":208,"y":2,"w":20,"h":20},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":20,"h":20},
+	"sourceSize": {"w":20,"h":20}
+},
+"jet.png":
+{
+	"frame": {"x":96,"y":299,"w":80,"h":37},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":80,"h":37},
+	"sourceSize": {"w":80,"h":37}
+},
+"laser.png":
+{
+	"frame": {"x":183,"y":2,"w":23,"h":2},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":23,"h":2},
+	"sourceSize": {"w":23,"h":2}
+},
+"plant.png":
+{
+	"frame": {"x":205,"y":24,"w":14,"h":36},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":4,"y":4,"w":14,"h":36},
+	"sourceSize": {"w":20,"h":40}
+},
+"shark.png":
+{
+	"frame": {"x":2,"y":290,"w":92,"h":48},
+	"rotated": false,
+	"trimmed": true,
+	"spriteSourceSize": {"x":5,"y":0,"w":92,"h":48},
+	"sourceSize": {"w":100,"h":50}
+},
+"submarine.png":
+{
+	"frame": {"x":2,"y":63,"w":128,"h":41},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":128,"h":41},
+	"sourceSize": {"w":128,"h":41}
+}},
+"meta": {
+	"app": "http://www.codeandweb.com/texturepacker ",
+	"version": "1.0",
+	"image": "assets.png",
+	"format": "RGBA8888",
+	"size": {"w":256,"h":512},
+	"scale": "1",
+	"smartupdate": "$TexturePacker:SmartUpdate:722657bf39b0a993e3c69dfa3b3a5395:451cb445be8d5bbfb76630fb6fdd9f0f:a759b6bbc8381ac9c472b28f589ad0d6$"
+}
+}
