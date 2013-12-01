@@ -2,13 +2,16 @@ part of client;
 
 abstract class Spawner extends VoidEntitySystem {
   Transform pt;
+  Velocity pv;
   PlayerManager pm;
 
   void initialize() {
     TagManager tag = world.getManager(new TagManager().runtimeType);
     Entity player = tag.getEntity(TAG_PLAYER);
     var tm = new ComponentMapper<Transform>(Transform, world);
+    var vm = new ComponentMapper<Velocity>(Velocity, world);
     pt = tm.get(player);
+    pv = vm.get(player);
     pm = world.getManager(PlayerManager);
   }
 
@@ -23,13 +26,17 @@ abstract class Spawner extends VoidEntitySystem {
   bool checkProcessing() => random.nextDouble() < chance;
 
   double get chance;
+
+  double get baseSpeed => max(pv.x/2, 0.05);
+
+  int get spawnPoint => random.nextBool() ? 1 : -1;
 }
 
 class AirplaneSpawner extends Spawner {
 
   void processSystem() {
-    addEntity([new Transform(pt.x - MAX_WIDTH * 2, (-3.5 + random.nextDouble() * 1) * MAX_HEIGHT/8, orientation: 0),
-               new Velocity(x: 0.3 + random.nextDouble() * 0.4),
+    addEntity([new Transform(pt.x - MAX_WIDTH * 2 * spawnPoint, (-3.5 + random.nextDouble() * 1) * MAX_HEIGHT/8, orientation: 0),
+               new Velocity(x: baseSpeed + random.nextDouble() * 0.2),
                new Spatial(name: 'airplane.png'),
                new BodyDef('airplane'),
                new Health(5),
@@ -46,8 +53,8 @@ class AirplaneSpawner extends Spawner {
 class SubmarineSpawner extends Spawner {
 
   void processSystem() {
-    addEntity([new Transform(pt.x - MAX_WIDTH * 2, (1 + random.nextDouble()*2) * MAX_HEIGHT/8, orientation: 0),
-               new Velocity(x: 0.2 + random.nextDouble() * 0.4),
+    addEntity([new Transform(pt.x - MAX_WIDTH * 2 * spawnPoint, (1 + random.nextDouble()*2) * MAX_HEIGHT/8, orientation: 0),
+               new Velocity(x: baseSpeed + random.nextDouble() * 0.2),
                new Spatial(name: 'submarine.png'),
                new BodyDef('submarine'),
                new Health(4),
@@ -64,8 +71,8 @@ class SubmarineSpawner extends Spawner {
 class JetSpawner extends Spawner {
 
   void processSystem() {
-    addEntity([new Transform(pt.x - MAX_WIDTH * 2, (-2.5 + random.nextDouble()*1) * MAX_HEIGHT/8, orientation: 0),
-               new Velocity(x: 0.4 + random.nextDouble() * 0.5),
+    addEntity([new Transform(pt.x - MAX_WIDTH * 2 * spawnPoint, (-2.5 + random.nextDouble()*1) * MAX_HEIGHT/8, orientation: 0),
+               new Velocity(x: baseSpeed + random.nextDouble() * 0.25),
                new Spatial(name: 'jet.png'),
                new BodyDef('jet'),
                new Health(1),
@@ -82,8 +89,8 @@ class JetSpawner extends Spawner {
 class BattleshipSpawner extends Spawner {
 
   void processSystem() {
-    addEntity([new Transform(pt.x - MAX_WIDTH * 2, -10, orientation: 0),
-               new Velocity(x: 0.2 + random.nextDouble() * 0.3),
+    addEntity([new Transform(pt.x - MAX_WIDTH * 2 * spawnPoint, -10, orientation: 0),
+               new Velocity(x: pv.x.abs() + 0.05 + random.nextDouble() * 0.15),
                new Spatial(name: 'battleship.png'),
                new BodyDef('battleship'),
                new Health(6),

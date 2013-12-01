@@ -64,7 +64,7 @@ class Game extends GameBase {
             new BackgroundRenderingSystem(bufferCtx),
             new SpatialRenderingSystem(bufferCtx, spriteSheet),
             new ForegroundRenderingSystem(bufferCtx),
-            new DebugBodyDefRenderingSystem(bufferCtx, bodyDefs),
+//            new DebugBodyDefRenderingSystem(bufferCtx, bodyDefs),
             new BufferToCanvasSystem(buffer, ctx),
             new HudRenderingSystem(ctx),
             new SoundSystem(helper.audioHelper),
