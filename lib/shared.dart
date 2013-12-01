@@ -14,6 +14,8 @@ const String TAG_CAMERA = "camera";
 const int MAX_WIDTH = 800;
 const int MAX_HEIGHT = 600;
 
+final Random random = new Random();
+
 GameState state = new GameState();
 
 class GameState {

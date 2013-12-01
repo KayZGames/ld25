@@ -7,8 +7,6 @@ import 'package:ld25/client.dart';
 
 void main() => new Game().start();
 
-final Random random = new Random();
-
 class Game extends GameBase {
   CanvasElement buffer;
   CanvasRenderingContext2D bufferCtx;
@@ -24,6 +22,7 @@ class Game extends GameBase {
                new BodyDef('airplane'),
                new Health(10),
                new BodyCount(150),
+               new ExplosionOnCollision('impact', 1),
                new ImpactOnCollision()]);
 
     addEntity([new Transform(0, - 2 * MAX_HEIGHT/8, orientation: 0),
@@ -32,6 +31,7 @@ class Game extends GameBase {
                new BodyDef('jet'),
                new Health(2),
                new BodyCount(2),
+               new ExplosionOnCollision('impact', 1),
                new ImpactOnCollision()]);
 
     addEntity([new Transform(0, -10, orientation: 0),
@@ -40,6 +40,7 @@ class Game extends GameBase {
                new BodyDef('battleship'),
                new Health(12),
                new BodyCount(100),
+               new ExplosionOnCollision('impact', 1),
                new ImpactOnCollision()]);
 
     addEntity([new Transform(0, 2 * MAX_HEIGHT/8, orientation: 0),
@@ -48,6 +49,7 @@ class Game extends GameBase {
                new BodyDef('submarine'),
                new Health(8),
                new BodyCount(50),
+               new ExplosionOnCollision('impact', 1),
                new ImpactOnCollision()]);
 
 
@@ -86,6 +88,7 @@ class Game extends GameBase {
             new CollisionDetectionSystem(bodyDefs),
             new DestroyOnCollisionSystem(),
             new DamageToHealthSystem(),
+            new ExplosionOnCollisionSystem(),
             new DestructionSystem(),
             new DeathTollSystem(),
             new CameraSystem(),
@@ -96,7 +99,8 @@ class Game extends GameBase {
             new BufferToCanvasSystem(buffer, ctx),
             new HudRenderingSystem(ctx),
             new SoundSystem(helper.audioHelper),
-            new MenuSystem(canvas)
+            new MenuSystem(canvas),
+            new CollisionCleanupSystem()
       ];
   }
 

@@ -121,8 +121,15 @@ class BodyCount extends Component {
   BodyCount(this.value);
 }
 
-class Collision extends Component {}
+class Collision extends Component {
+  double x, y;
+  Collision(this.x, this.y);
+}
 class Destruction extends Component {}
 class ImpactOnCollision extends Component {}
 class DestroyOnCollision extends Component {}
-class ExplosionOnDestruction extends Component {}
+class ExplosionOnCollision extends Component {
+  int explosions;
+  String effect;
+  ExplosionOnCollision(this.effect, this.explosions);
+}
