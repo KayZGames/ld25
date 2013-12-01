@@ -19,7 +19,7 @@ class Game extends GameBase {
     TagManager tm = world.getManager(TagManager);
 
     addEntity([new Transform(0, - 3 * MAX_HEIGHT/8, orientation: 0),
-               new Velocity(x: 0.0),
+               new Velocity(x: 0.5),
                new Spatial(name: 'airplane.png'),
                new BodyDef('airplane'),
                new DestroyOnCollision()]);
