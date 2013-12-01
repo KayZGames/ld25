@@ -90,7 +90,8 @@ class TeleportsOnTarget extends Component {
   static Type get type => new TeleportsOnTarget._hack().runtimeType;
   TeleportsOnTarget._hack();
   int y, by;
-  TeleportsOnTarget(this.y, this.by);
+  String sound;
+  TeleportsOnTarget(this.y, this.by, {this.sound : null});
 }
 
 class BodyDef extends Component {

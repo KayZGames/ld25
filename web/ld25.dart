@@ -60,7 +60,7 @@ class Game extends GameBase {
       addEntity([new Transform(random.nextInt(MAX_WIDTH), random.nextInt(MAX_HEIGHT), orientation: FastMath.HALF_PI, repeatsEveryX: MAX_WIDTH + random.nextInt(MAX_WIDTH)),
                  new Velocity(y: -0.005 - random.nextDouble() * 0.01),
                  new Spatial(name: 'bubble.png'),
-                 new TeleportsOnTarget(0, MAX_HEIGHT)]);
+                 new TeleportsOnTarget(0, MAX_HEIGHT, sound: 'bubble_burst')]);
     }
 
     Entity e = addEntity([new Transform(0, MAX_HEIGHT/4, orientation: 0),
@@ -105,7 +105,7 @@ class Game extends GameBase {
     buffer = new CanvasElement(width: MAX_WIDTH, height: MAX_HEIGHT);
     bufferCtx = buffer.context2D;
 
-    helper.audioHelper.loadAudioClips(['laser_shoot']);
+    helper.audioHelper.loadAudioClips(['laser_shoot', 'bubble_burst']);
   }
 
   void onInitDone() {}

@@ -161,6 +161,11 @@ class EntityTeleportationSystem extends EntityProcessingSystem {
 
     if (teleport.y > transform.y) {
       transform.y += teleport.by;
+      if (teleport.sound != null) {
+        var e = world.createEntity();
+        e.addComponent(new Sound(teleport.sound));
+        e.addToWorld();
+      }
     }
   }
 
