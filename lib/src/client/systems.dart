@@ -59,8 +59,8 @@ class PlayerControlSystem extends VoidEntitySystem {
 
   void recalcVelocity(double targetV) {
     if (transform.y > 0) {
-      double diffX = targetV * FastMath.cos(transform.orientation) - velocity.x;
-      double diffY = targetV * FastMath.sin(transform.orientation) - velocity.y;
+      double diffX = targetV * transform.rotation.entry(0, 0) - velocity.x;
+      double diffY = targetV * transform.rotation.entry(1, 0) - velocity.y;
       velocity.x += diffX * 0.1;
       velocity.y += diffY * 0.1;
     }
@@ -277,11 +277,11 @@ class WeaponFiringSystem extends EntityProcessingSystem {
       Velocity v = velocityMapper.get(e);
 
       Entity laser = world.createEntity();
-      double offsetX = 13 * FastMath.sin(t.orientation) + 17 * FastMath.cos(t.orientation);
-      double offsetY = - 13 * FastMath.cos(t.orientation) + 17 * FastMath.sin(t.orientation);
+      double offsetX = 13 * t.rotation.entry(1, 0) + 17 * t.rotation.entry(0, 0);
+      double offsetY = - 13 * t.rotation.entry(0, 0) + 17 * t.rotation.entry(1, 0);
       double speed = w.bulletSpeed;
-      laser.addComponent(new Transform(t.x + offsetX , t.y + offsetY, orientation: t.orientation) );
-      laser.addComponent(new Velocity(x: v.x + speed * FastMath.cos(t.orientation), y: v.y + speed * FastMath.sin(t.orientation)));
+      laser.addComponent(new Transform(t.x + offsetX , t.y + offsetY, rotation: t.rotation) );
+      laser.addComponent(new Velocity(x: v.x + speed * t.rotation.entry(0, 0), y: v.y + speed * t.rotation.entry(1, 0)));
       laser.addComponent(new Spatial(name: 'laser.png'));
       laser.addComponent(new ExpirationTimer(1000));
       laser.addComponent(new BodyDef('laser'));
@@ -425,8 +425,14 @@ class CollisionDetectionSystem extends EntitySystem {
           var entity1 = entities[i];
           var entity2 = entities[j];
 
-          var pos1 = tm.get(entity1).position;
-          var pos2 = tm.get(entity2).position;
+          var t1 = tm.get(entity1);
+          var t2 = tm.get(entity2);
+
+          var pos1 = t1.position;
+          var pos2 = t2.position;
+
+          var rotation1 = t1.rotation;
+          var rotation2 = t2.rotation;
 
           var bodyId1 = bm.get(entity1).bodyId;
           var bodyId2 = bm.get(entity2).bodyId;
@@ -434,7 +440,7 @@ class CollisionDetectionSystem extends EntitySystem {
           var shapes1 = bodyDefs[bodyId1];
           var shapes2 = bodyDefs[bodyId2];
 
-          if (doShapesCollide(shapes1, pos1, shapes2, pos2)) {
+          if (doShapesCollide(shapes1, pos1, rotation1, shapes2, pos2, rotation2)) {
             entity1.addComponent(new Collision());
             entity2.addComponent(new Collision());
             transferDamage(entity1, entity2);
@@ -454,21 +460,22 @@ class CollisionDetectionSystem extends EntitySystem {
     }
   }
 
-  bool doShapesCollide(List<Polygon> shapes1, Vector2 pos1, List<Polygon> shapes2, Vector2 pos2) {
+  bool doShapesCollide(List<Polygon> shapes1, Vector2 pos1, Matrix2 rotation1, List<Polygon> shapes2, Vector2 pos2, Matrix2 rotation2) {
     bool shapeCollides = true;
     shapes2.forEach((shape2) {
       shapeCollides = false;
       shapes1.where((_) => !shapeCollides).forEach((shape1) {
         shapeCollides = true;
-        var currentVertex1 = shape1.vertices.last;
+        var currentVertex1 = rotate(pos1, shape1.vertices.last, rotation1);
 
         shape1.vertices.forEach((vertex1) {
-          var normal = getNormal(currentVertex1 + pos1, vertex1 + pos1);
+          var nextVertex1 = rotate(pos1, vertex1, rotation1);
+          var normal = getNormal(currentVertex1, nextVertex1);
 
-          double min1 = (vertex1 + pos1).dot(normal);
+          double min1 = nextVertex1.dot(normal);
           double max1 = min1;
           shape1.vertices.sublist(1).forEach((projectedVertex1) {
-            var dot = (projectedVertex1 + pos1).dot(normal);
+            var dot = rotate(pos1, projectedVertex1, rotation1).dot(normal);
             min1 = min(min1, dot);
             max1 = max(max1, dot);
           });
@@ -477,7 +484,7 @@ class CollisionDetectionSystem extends EntitySystem {
           double max2;
           bool collides = true;
           shape2.vertices.forEach((projectedVertex2) {
-            var dot = (projectedVertex2 + pos2).dot(normal);
+            var dot = rotate(pos2, projectedVertex2, rotation2).dot(normal);
             if (null == min2) {
               min2 = dot;
               max2 = dot;
@@ -489,7 +496,7 @@ class CollisionDetectionSystem extends EntitySystem {
             shapeCollides = false;
             return;
           }
-          currentVertex1 = vertex1;
+          currentVertex1 = nextVertex1;
         });
         if (shapeCollides) {
           return;
@@ -517,4 +524,41 @@ class DestroyOnCollisionSystem extends EntityProcessingSystem {
   void processEntity(Entity entity) {
     entity.deleteFromWorld();
   }
+}
+
+class DebugBodyDefRenderingSystem extends EntityProcessingSystem {
+  ComponentMapper<Transform> tm;
+  ComponentMapper<BodyDef> bm;
+  CanvasRenderingContext2D context;
+  Map<String, List<Polygon>> bodyDefs;
+
+  DebugBodyDefRenderingSystem(this.context, this.bodyDefs) : super(Aspect.getAspectForAllOf([Transform, BodyDef]));
+
+  void initialize() {
+    tm = new ComponentMapper<Transform>(Transform, world);
+    bm = new ComponentMapper<BodyDef>(BodyDef, world);
+  }
+
+  void processEntity(Entity entity) {
+    var t = tm.get(entity);
+    var b = bm.get(entity);
+
+    var pos = t.position;
+
+    context.beginPath();
+    bodyDefs[b.bodyId].forEach((Polygon polygon) {
+      var rotated = rotate(pos, polygon.vertices.last, t.rotation);
+      context.moveTo(rotated.x, rotated.y);
+      polygon.vertices.forEach((vertex) {
+        var rotated = rotate(pos, vertex, t.rotation);
+        context.lineTo(rotated.x, rotated.y);
+      });
+    });
+    context.stroke();
+  }
+
+}
+
+Vector2 rotate(Vector2 o, Vector2 p, Matrix2 mRot) {
+  return o + mRot.transform(p.clone());
 }

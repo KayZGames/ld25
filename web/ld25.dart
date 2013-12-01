@@ -19,7 +19,7 @@ class Game extends GameBase {
     TagManager tm = world.getManager(TagManager);
 
     addEntity([new Transform(0, - 3 * MAX_HEIGHT/8, orientation: 0),
-               new Velocity(x: 0.5),
+               new Velocity(x: 0.0),
                new Spatial(name: 'airplane.png'),
                new BodyDef('airplane'),
                new DestroyOnCollision()]);
@@ -41,6 +41,7 @@ class Game extends GameBase {
                           new Velocity(),
                           new Spatial(name: "shark.png"),
                           new Mass(),
+                          new BodyDef('shark'),
                           new Weapon(cooldownTime: 500)]);
     tm.register(e, TAG_PLAYER);
 
@@ -60,6 +61,7 @@ class Game extends GameBase {
             new BackgroundRenderingSystem(bufferCtx),
             new SpatialRenderingSystem(bufferCtx, spriteSheet),
             new ForegroundRenderingSystem(bufferCtx),
+            new DebugBodyDefRenderingSystem(bufferCtx, bodyDefs),
             new BufferToCanvasSystem(buffer, ctx),
             new SoundSystem(helper.audioHelper),
             new CollisionDetectionSystem(bodyDefs),

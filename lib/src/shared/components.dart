@@ -4,15 +4,20 @@ class Transform extends Component {
   static Type get type => new Transform._hack().runtimeType;
   Transform._hack();
   Vector2 position;
-  double _orientation;
+  Matrix2 _rotation;
   int repeatsEveryX;
-  Transform(num x, num y, {num orientation : 0, this.repeatsEveryX: 0}) :
+  Transform(num x, num y, {num orientation : 0, Matrix2 rotation, this.repeatsEveryX: 0}) :
                             position = new Vector2(x.toDouble(), y.toDouble()) {
-    _orientation = orientation.toDouble() % FastMath.PI;
+    if (null != rotation) {
+      _rotation = rotation.clone();
+    } else {
+      _rotation = new Matrix2.rotation(orientation.toDouble());
+    }
   }
 
-  set orientation(num value) => _orientation = value.toDouble() % FastMath.TWO_PI;
-  double get orientation => _orientation;
+  set orientation(num value) => _rotation.setRotation(value.toDouble());
+  double get orientation => atan2(rotation.entry(1, 0), rotation.entry(0, 0));
+  Matrix2 get rotation => _rotation;
   set x(num value) => position.x = value.toDouble();
   set y(num value) => position.y = value.toDouble();
   double get x => position.x;
