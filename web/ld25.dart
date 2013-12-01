@@ -22,7 +22,9 @@ class Game extends GameBase {
                new Velocity(x: 0.5),
                new Spatial(name: 'airplane.png'),
                new BodyDef('airplane'),
-               new DestroyOnCollision()]);
+               new Health(10),
+               new BodyCount(200),
+               new ImpactOnCollision()]);
 
 
     for (int i =0; i < 10; i++) {
@@ -57,6 +59,11 @@ class Game extends GameBase {
             new EntityTeleportationSystem(),
             new ExpirationSystem(),
             new WeaponFiringSystem(),
+            new CollisionDetectionSystem(bodyDefs),
+            new DestroyOnCollisionSystem(),
+            new DamageToHealthSystem(),
+            new DestructionSystem(),
+            new DeathTollSystem(),
             new CameraSystem(),
             new BackgroundRenderingSystem(bufferCtx),
             new SpatialRenderingSystem(bufferCtx, spriteSheet),
@@ -64,8 +71,6 @@ class Game extends GameBase {
             new DebugBodyDefRenderingSystem(bufferCtx, bodyDefs),
             new BufferToCanvasSystem(buffer, ctx),
             new SoundSystem(helper.audioHelper),
-            new CollisionDetectionSystem(bodyDefs),
-            new DestroyOnCollisionSystem(),
             new MenuSystem(canvas)
       ];
   }

@@ -116,12 +116,20 @@ class BackgroundRenderingSystem extends VoidEntitySystem {
   }
 
   void processSystem() {
-    context.setTransform(1, 0, 0, 1, 0, 0);
-    context.translate(-cameraTransform.x, MAX_HEIGHT/2);
-    context..fillStyle = "blue"
-        ..fillRect(cameraTransform.x, 0, MAX_WIDTH, MAX_HEIGHT/2)
-        ..fillStyle = "lightblue"
-        ..fillRect(cameraTransform.x, -MAX_HEIGHT/2, MAX_WIDTH, MAX_HEIGHT/2);
+    context..setTransform(1, 0, 0, 1, 0, 0)
+           ..translate(-cameraTransform.x, MAX_HEIGHT/2)
+           ..fillStyle = waterColor
+           ..fillRect(cameraTransform.x, 0, MAX_WIDTH, MAX_HEIGHT/2)
+           ..fillStyle = "lightblue"
+           ..fillRect(cameraTransform.x, -MAX_HEIGHT/2, MAX_WIDTH, MAX_HEIGHT/2);
+  }
+
+  String get waterColor {
+    if (state.deathToll == 200) {
+      return 'darkred';
+    } else {
+      return 'blue';
+    }
   }
 }
 
@@ -131,9 +139,9 @@ class ForegroundRenderingSystem extends BackgroundRenderingSystem {
   void processSystem() {
     context.save();
     try {
-      context.globalAlpha = 0.25;
-      context..fillStyle = "blue"
-          ..fillRect(cameraTransform.x, 0, MAX_WIDTH, MAX_HEIGHT/2);;
+      context..globalAlpha = 0.25
+             ..fillStyle = waterColor
+             ..fillRect(cameraTransform.x, 0, MAX_WIDTH, MAX_HEIGHT/2);;
     } finally {
       context.restore();
     }
@@ -286,6 +294,7 @@ class WeaponFiringSystem extends EntityProcessingSystem {
       laser.addComponent(new ExpirationTimer(1000));
       laser.addComponent(new BodyDef('laser'));
       laser.addComponent(new DestroyOnCollision());
+      laser.addComponent(new DamageOnCollision(w.bulletDamage));
       laser.addToWorld();
       Entity laserSound = world.createEntity();
       laserSound.addComponent(new Sound('laser_shoot'));
@@ -408,6 +417,7 @@ class CollisionDetectionSystem extends EntitySystem {
   ComponentMapper<BodyDef> bm;
   ComponentMapper<DamageOnCollision> docm;
   Map<String, List<Polygon>> bodyDefs;
+  bool collisions = false;
 
   CollisionDetectionSystem(this.bodyDefs) : super(Aspect.getAspectForAllOf([Transform, BodyDef]));
 
@@ -415,6 +425,16 @@ class CollisionDetectionSystem extends EntitySystem {
     tm = new ComponentMapper<Transform>(Transform, world);
     bm = new ComponentMapper<BodyDef>(BodyDef, world);
     docm = new ComponentMapper<DamageOnCollision>(DamageOnCollision, world);
+  }
+
+  void begin() {
+    collisions = false;
+  }
+
+  void end() {
+    if (collisions) {
+      world.processEntityChanges();
+    }
   }
 
   void processEntities(ReadOnlyBag<Entity> entities) {
@@ -447,6 +467,7 @@ class CollisionDetectionSystem extends EntitySystem {
             transferDamage(entity2, entity1);
             entity1.changedInWorld();
             entity2.changedInWorld();
+            collisions = true;
           }
         }
       }
@@ -561,4 +582,48 @@ class DebugBodyDefRenderingSystem extends EntityProcessingSystem {
 
 Vector2 rotate(Vector2 o, Vector2 p, Matrix2 mRot) {
   return o + mRot.transform(p.clone());
+}
+
+class DeathTollSystem extends EntityProcessingSystem {
+  ComponentMapper<BodyCount> bcm;
+
+  DeathTollSystem() : super(Aspect.getAspectForAllOf([BodyCount, Destruction]));
+
+  void initialize() {
+    bcm = new ComponentMapper<BodyCount>(BodyCount, world);
+  }
+
+  void processEntity(Entity entity) {
+    var bc = bcm.get(entity);
+    state.deathToll += bc.value;
+  }
+}
+
+class DamageToHealthSystem extends EntityProcessingSystem {
+  ComponentMapper<Health> hm;
+  ComponentMapper<Damage> dm;
+  DamageToHealthSystem() : super(Aspect.getAspectForAllOf([Health, Damage]));
+
+  void initialize() {
+    hm = new ComponentMapper<Health>(Health, world);
+    dm = new ComponentMapper<Damage>(Damage, world);
+  }
+
+  void processEntity(Entity entity) {
+    var h = hm.get(entity);
+    var d = dm.get(entity);
+
+    h.currentHealth -= d.value;
+
+    entity.removeComponent(Damage);
+    if (h.currentHealth <= 0) {
+      entity.addComponent(new Destruction());
+    }
+    entity.changedInWorld();
+  }
+}
+
+class DestructionSystem extends EntityProcessingSystem {
+  DestructionSystem() : super(Aspect.getAspectForAllOf([Destruction]));
+  void processEntity(Entity entity) => entity.deleteFromWorld();
 }

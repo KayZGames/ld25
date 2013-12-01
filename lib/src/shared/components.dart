@@ -54,7 +54,8 @@ class Weapon extends Component {
   num cooldownTimer = 0;
   num cooldownTime;
   double bulletSpeed;
-  Weapon({this.cooldownTime : 1000, num bulletSpeed : 2}) : bulletSpeed = bulletSpeed.toDouble() {
+  int bulletDamage;
+  Weapon({this.cooldownTime : 1000, num bulletSpeed : 2, this.bulletDamage : 1}) : bulletSpeed = bulletSpeed.toDouble() {
     cooldownTimer = 1000;
   }
 
@@ -105,6 +106,18 @@ class Damage extends Component {
 class DamageOnCollision extends Component {
   int value;
   DamageOnCollision(this.value);
+}
+
+class Health extends Component {
+  int maxHealth, currentHealth;
+  Health(this.maxHealth) {
+    currentHealth = maxHealth;
+  }
+}
+
+class BodyCount extends Component {
+  int value;
+  BodyCount(this.value);
 }
 
 class Collision extends Component {}

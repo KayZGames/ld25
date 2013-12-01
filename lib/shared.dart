@@ -19,5 +19,6 @@ GameState state = new GameState();
 class GameState {
   bool started = false;
   bool paused = false;
+  int deathToll = 0;
   bool get running => started && !paused;
 }
