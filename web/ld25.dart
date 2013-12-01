@@ -19,11 +19,35 @@ class Game extends GameBase {
     TagManager tm = world.getManager(TagManager);
 
     addEntity([new Transform(0, - 3 * MAX_HEIGHT/8, orientation: 0),
-               new Velocity(x: 0.5),
+               new Velocity(x: 0.3 + random.nextDouble() * 0.4),
                new Spatial(name: 'airplane.png'),
                new BodyDef('airplane'),
                new Health(10),
-               new BodyCount(200),
+               new BodyCount(150),
+               new ImpactOnCollision()]);
+
+    addEntity([new Transform(0, - 2 * MAX_HEIGHT/8, orientation: 0),
+               new Velocity(x: 0.4 + random.nextDouble() * 0.5),
+               new Spatial(name: 'jet.png'),
+               new BodyDef('jet'),
+               new Health(2),
+               new BodyCount(2),
+               new ImpactOnCollision()]);
+
+    addEntity([new Transform(0, -10, orientation: 0),
+               new Velocity(x: 0.2 + random.nextDouble() * 0.3),
+               new Spatial(name: 'battleship.png'),
+               new BodyDef('battleship'),
+               new Health(12),
+               new BodyCount(100),
+               new ImpactOnCollision()]);
+
+    addEntity([new Transform(0, 2 * MAX_HEIGHT/8, orientation: 0),
+               new Velocity(x: 0.2 + random.nextDouble() * 0.4),
+               new Spatial(name: 'submarine.png'),
+               new BodyDef('submarine'),
+               new Health(8),
+               new BodyCount(50),
                new ImpactOnCollision()]);
 
 

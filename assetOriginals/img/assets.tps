@@ -54,7 +54,7 @@
             </struct>
         </struct>
         <key>shapePadding</key>
-        <uint>0</uint>
+        <uint>2</uint>
         <key>jpgQuality</key>
         <uint>80</uint>
         <key>pngOptimizationLevel</key>
@@ -64,7 +64,7 @@
         <key>textureFormat</key>
         <enum type="SettingsBase::TextureFormat">png</enum>
         <key>borderPadding</key>
-        <uint>0</uint>
+        <uint>2</uint>
         <key>maxTextureSize</key>
         <QSize>
             <key>width</key>
@@ -201,6 +201,9 @@
             <filename>laser.png</filename>
             <filename>plant.png</filename>
             <filename>shark.png</filename>
+            <filename>jet.png</filename>
+            <filename>submarine.png</filename>
+            <filename>battleship.png</filename>
         </array>
         <key>ignoreFileList</key>
         <array/>
