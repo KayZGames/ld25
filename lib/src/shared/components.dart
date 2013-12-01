@@ -128,8 +128,14 @@ class Collision extends Component {
 class Destruction extends Component {}
 class ImpactOnCollision extends Component {}
 class DestroyOnCollision extends Component {}
-class ExplosionOnCollision extends Component {
+class ExplosionOnEvent extends Component {
   int explosions;
   String effect;
-  ExplosionOnCollision(this.effect, this.explosions);
+  ExplosionOnEvent(this.effect, this.explosions);
+}
+class ExplosionOnCollision extends ExplosionOnEvent {
+  ExplosionOnCollision(String effect, int explosions) : super(effect, explosions);
+}
+class ExplosionOnDestruction extends ExplosionOnEvent {
+  ExplosionOnDestruction(String effect, int explosions) : super(effect, explosions);
 }

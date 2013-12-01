@@ -23,6 +23,7 @@ class Game extends GameBase {
                new Health(10),
                new BodyCount(150),
                new ExplosionOnCollision('impact', 1),
+               new ExplosionOnDestruction('explosion', 4),
                new ImpactOnCollision()]);
 
     addEntity([new Transform(0, - 2 * MAX_HEIGHT/8, orientation: 0),
@@ -32,6 +33,7 @@ class Game extends GameBase {
                new Health(2),
                new BodyCount(2),
                new ExplosionOnCollision('impact', 1),
+               new ExplosionOnDestruction('explosion', 2),
                new ImpactOnCollision()]);
 
     addEntity([new Transform(0, -10, orientation: 0),
@@ -41,6 +43,7 @@ class Game extends GameBase {
                new Health(12),
                new BodyCount(100),
                new ExplosionOnCollision('impact', 1),
+               new ExplosionOnDestruction('explosion', 5),
                new ImpactOnCollision()]);
 
     addEntity([new Transform(0, 2 * MAX_HEIGHT/8, orientation: 0),
@@ -50,6 +53,7 @@ class Game extends GameBase {
                new Health(8),
                new BodyCount(50),
                new ExplosionOnCollision('impact', 1),
+               new ExplosionOnDestruction('explosion', 4),
                new ImpactOnCollision()]);
 
 
@@ -89,6 +93,7 @@ class Game extends GameBase {
             new DestroyOnCollisionSystem(),
             new DamageToHealthSystem(),
             new ExplosionOnCollisionSystem(),
+            new ExplosionOnDestructionSystem(bodyDefs),
             new DestructionSystem(),
             new DeathTollSystem(),
             new CameraSystem(),

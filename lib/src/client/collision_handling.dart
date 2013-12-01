@@ -163,12 +163,49 @@ class ExplosionOnCollisionSystem extends EntityProcessingSystem {
     var e = em.get(entity);
     var c = cm.get(entity);
     var v = vm.get(entity);
-    for (int i = 0; i < e.explosions; i++) {
+    for (int i = 0; i < e.explosions * 3; i++) {
       var explosion = world.createEntity();
       explosion.addComponent(new Spatial(name: '${e.effect}_${random.nextInt(4)}.png'));
       explosion.addComponent(new Transform(c.x, c.y));
       explosion.addComponent(new Velocity(x: v.x * 0.9, y: v.y * 0.9));
-      explosion.addComponent(new ExpirationTimer(1000));
+      explosion.addComponent(new ExpirationTimer(50 + random.nextDouble() * 150));
+      explosion.addToWorld();
+    }
+  }
+}
+
+
+class ExplosionOnDestructionSystem extends EntityProcessingSystem {
+  ComponentMapper<ExplosionOnDestruction> em;
+  ComponentMapper<Velocity> vm;
+  ComponentMapper<Transform> tm;
+  ComponentMapper<BodyDef> bm;
+  Map<String, List<Polygon>> bodyDefs;
+
+  ExplosionOnDestructionSystem(this.bodyDefs) : super(Aspect.getAspectForAllOf([Transform, BodyDef, Destruction, ExplosionOnDestruction, Velocity]));
+
+  void initialize() {
+    em = new ComponentMapper<ExplosionOnDestruction>(ExplosionOnDestruction, world);
+    vm = new ComponentMapper<Velocity>(Velocity, world);
+    tm = new ComponentMapper<Transform>(Transform, world);
+    bm = new ComponentMapper<BodyDef>(BodyDef, world);
+  }
+
+  void processEntity(Entity entity) {
+    var e = em.get(entity);
+    var v = vm.get(entity);
+    var b = bm.get(entity);
+    var t = tm.get(entity);
+    var polys = bodyDefs[b.bodyId];
+    for (int i = 0; i < e.explosions * 3; i++) {
+      var explosion = world.createEntity();
+      explosion.addComponent(new Spatial(name: '${e.effect}_${random.nextInt(4)}.png'));
+      var poly = polys[random.nextInt(polys.length)];
+      var vertex = poly.vertices[random.nextInt(poly.vertices.length)];
+      var pos = rotate(t.position, vertex, t.rotation);
+      explosion.addComponent(new Transform(pos.x, pos.y));
+      explosion.addComponent(new Velocity(x: v.x * 0.9, y: v.y * 0.9));
+      explosion.addComponent(new ExpirationTimer(50 + random.nextDouble() * 250));
       explosion.addToWorld();
     }
   }
