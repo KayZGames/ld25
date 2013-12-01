@@ -2,6 +2,7 @@ library shared;
 
 import 'dart:math';
 
+import 'package:vector_math/vector_math.dart';
 import 'package:dartemis/dartemis.dart';
 export 'package:dartemis/dartemis.dart';
 

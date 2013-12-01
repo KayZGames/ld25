@@ -20,7 +20,9 @@ class Game extends GameBase {
 
     addEntity([new Transform(0, - 3 * MAX_HEIGHT/8, orientation: 0),
                new Velocity(x: 0.5),
-               new Spatial(name: 'airplane.png')]);
+               new Spatial(name: 'airplane.png'),
+               new BodyDef('airplane'),
+               new DestroyOnCollision()]);
 
 
     for (int i =0; i < 10; i++) {
@@ -60,6 +62,8 @@ class Game extends GameBase {
             new ForegroundRenderingSystem(bufferCtx),
             new BufferToCanvasSystem(buffer, ctx),
             new SoundSystem(helper.audioHelper),
+            new CollisionDetectionSystem(bodyDefs),
+            new DestroyOnCollisionSystem(),
             new MenuSystem(canvas)
       ];
   }

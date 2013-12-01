@@ -1,5 +1,6 @@
 library client;
 
+import 'dart:math';
 import 'dart:html';
 export 'dart:html';
 
@@ -8,5 +9,6 @@ import 'package:ld25/shared.dart';
 export 'package:ld25/shared.dart';
 import 'package:gamedev_helpers/gamedev_helpers.dart';
 export 'package:gamedev_helpers/gamedev_helpers.dart';
+import 'package:vector_math/vector_math.dart';
 
 part 'src/client/systems.dart';

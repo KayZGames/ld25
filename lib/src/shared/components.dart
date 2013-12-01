@@ -3,15 +3,20 @@ part of shared;
 class Transform extends Component {
   static Type get type => new Transform._hack().runtimeType;
   Transform._hack();
-  num x, y;
+  Vector2 position;
   double _orientation;
   int repeatsEveryX;
-  Transform(this.x, this.y, {num orientation : 0, this.repeatsEveryX: 0}) {
+  Transform(num x, num y, {num orientation : 0, this.repeatsEveryX: 0}) :
+                            position = new Vector2(x.toDouble(), y.toDouble()) {
     _orientation = orientation.toDouble() % FastMath.PI;
   }
 
   set orientation(num value) => _orientation = value.toDouble() % FastMath.TWO_PI;
   double get orientation => _orientation;
+  set x(num value) => position.x = value.toDouble();
+  set y(num value) => position.y = value.toDouble();
+  double get x => position.x;
+  double get y => position.y;
 }
 
 class Velocity extends Component {
@@ -43,7 +48,8 @@ class Weapon extends Component {
   bool shoot = false;
   num cooldownTimer = 0;
   num cooldownTime;
-  Weapon({this.cooldownTime : 1000}) {
+  double bulletSpeed;
+  Weapon({this.cooldownTime : 1000, num bulletSpeed : 2}) : bulletSpeed = bulletSpeed.toDouble() {
     cooldownTimer = 1000;
   }
 
@@ -80,3 +86,24 @@ class TeleportsOnTarget extends Component {
   int y, by;
   TeleportsOnTarget(this.y, this.by);
 }
+
+class BodyDef extends Component {
+  String bodyId;
+  BodyDef(this.bodyId);
+}
+
+class Damage extends Component {
+  int value;
+  Damage(this.value);
+}
+
+class DamageOnCollision extends Component {
+  int value;
+  DamageOnCollision(this.value);
+}
+
+class Collision extends Component {}
+class Destruction extends Component {}
+class ImpactOnCollision extends Component {}
+class DestroyOnCollision extends Component {}
+class ExplosionOnDestruction extends Component {}
