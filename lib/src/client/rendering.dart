@@ -127,16 +127,18 @@ class BackgroundRenderingSystem extends VoidEntitySystem {
            ..translate(-cameraTransform.x, MAX_HEIGHT/2)
            ..fillStyle = waterColor
            ..fillRect(cameraTransform.x, 0, MAX_WIDTH, MAX_HEIGHT/2)
-           ..fillStyle = "lightblue"
+           ..fillStyle = skyColor
            ..fillRect(cameraTransform.x, -MAX_HEIGHT/2, MAX_WIDTH, MAX_HEIGHT/2);
   }
 
   String get waterColor {
-    if (state.deathToll == 200) {
-      return 'darkred';
-    } else {
-      return 'blue';
-    }
+    int v = min(127, state.deathToll ~/ 100);
+    return rgbToHex(v, 0, 255-v*2);
+  }
+
+  String get skyColor {
+    int v = min(64, state.deathToll ~/ 100);
+    return rgbToHex(v, 255-2*v, 255-4*v~/3);
   }
 }
 
