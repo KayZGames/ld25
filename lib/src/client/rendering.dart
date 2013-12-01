@@ -1,5 +1,15 @@
 part of client;
 
+class HudRenderingSystem extends VoidEntitySystem {
+  CanvasRenderingContext2D ctx;
+  HudRenderingSystem(this.ctx);
+
+  void processSystem() {
+    ctx..fillStyle = 'darkred'
+       ..fillText('Death Toll: ${state.deathToll}', 0, 0);
+  }
+}
+
 class DebugBodyDefRenderingSystem extends EntityProcessingSystem {
   ComponentMapper<Transform> tm;
   ComponentMapper<BodyDef> bm;

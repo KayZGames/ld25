@@ -70,6 +70,7 @@ class Game extends GameBase {
             new ForegroundRenderingSystem(bufferCtx),
             new DebugBodyDefRenderingSystem(bufferCtx, bodyDefs),
             new BufferToCanvasSystem(buffer, ctx),
+            new HudRenderingSystem(ctx),
             new SoundSystem(helper.audioHelper),
             new MenuSystem(canvas)
       ];
