@@ -6,8 +6,9 @@ class Transform extends Component {
   Vector2 position;
   Matrix2 _rotation;
   int repeatsEveryX;
-  Transform(num x, num y, {num orientation : 0, Matrix2 rotation, this.repeatsEveryX: 0}) :
-                            position = new Vector2(x.toDouble(), y.toDouble()) {
+  Transform(num x, num y,
+      {num orientation: 0, Matrix2 rotation, this.repeatsEveryX: 0})
+      : position = new Vector2(x.toDouble(), y.toDouble()) {
     if (null != rotation) {
       _rotation = rotation.clone();
     } else {
@@ -29,7 +30,7 @@ class Velocity extends Component {
   Velocity._hack();
   num x, y;
   num max;
-  Velocity({this.x : 0, this.y: 0, this.max: 1});
+  Velocity({this.x: 0, this.y: 0, this.max: 1000});
 
   double get value => sqrt(x * x + y * y);
 }
@@ -55,8 +56,9 @@ class Weapon extends Component {
   num cooldownTime;
   double bulletSpeed;
   int bulletDamage;
-  Weapon({this.cooldownTime : 1000, num bulletSpeed : 2, this.bulletDamage : 1}) : bulletSpeed = bulletSpeed.toDouble() {
-    cooldownTimer = 1000;
+  Weapon({this.cooldownTime: 1, num bulletSpeed: 2000, this.bulletDamage: 1})
+      : bulletSpeed = bulletSpeed.toDouble() {
+    cooldownTimer = 1;
   }
 
   bool get canShoot {
@@ -69,6 +71,7 @@ class Weapon extends Component {
   }
 }
 
+class Controller extends Component {}
 class ExpirationTimer extends Component {
   static Type get type => new ExpirationTimer._hack().runtimeType;
   ExpirationTimer._hack();
@@ -91,7 +94,7 @@ class TeleportsOnTarget extends Component {
   TeleportsOnTarget._hack();
   int y, by;
   String sound;
-  TeleportsOnTarget(this.y, this.by, {this.sound : null});
+  TeleportsOnTarget(this.y, this.by, {this.sound: null});
 }
 
 class BodyDef extends Component {
@@ -134,10 +137,12 @@ class ExplosionOnEvent extends Component {
   ExplosionOnEvent(this.effect, this.explosions);
 }
 class ExplosionOnCollision extends ExplosionOnEvent {
-  ExplosionOnCollision(String effect, int explosions) : super(effect, explosions);
+  ExplosionOnCollision(String effect, int explosions)
+      : super(effect, explosions);
 }
 class ExplosionOnDestruction extends ExplosionOnEvent {
-  ExplosionOnDestruction(String effect, int explosions) : super(effect, explosions);
+  ExplosionOnDestruction(String effect, int explosions)
+      : super(effect, explosions);
 }
 
 class DisappearsOutOfRange extends Component {}

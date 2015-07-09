@@ -1,60 +1,30 @@
 part of client;
 
-class PlayerControlSystem extends VoidEntitySystem {
-
+class PlayerControlSystem extends GenericInputHandlingSystem {
   static const int FORWARD = KeyCode.UP;
-  static const int TURN_LEFT= KeyCode.LEFT;
+  static const int TURN_LEFT = KeyCode.LEFT;
   static const int TURN_RIGHT = KeyCode.RIGHT;
   static const int SHOOT = KeyCode.SPACE;
   static const int PAUSE1 = KeyCode.PAUSE;
   static const int PAUSE2 = KeyCode.P;
-  final Map<int, bool> keyPressed = new Map<int, bool>();
 
   Velocity velocity;
   Transform transform;
   Weapon weapon;
 
+  PlayerControlSystem() : super(Aspect.getAspectForAllOf([Controller]));
+
   void initialize() {
+    super.initialize();
     TagManager tm = world.getManager(new TagManager().runtimeType);
     Entity player = tm.getEntity(TAG_PLAYER);
-    ComponentMapper<Velocity> vcm = new ComponentMapper<Velocity>(Velocity, world);
-    ComponentMapper<Transform> tcm = new ComponentMapper<Transform>(Transform, world);
-    ComponentMapper<Weapon> wcm = new ComponentMapper<Weapon>(Weapon, world);
+    Mapper<Velocity> vcm = new Mapper<Velocity>(Velocity, world);
+    Mapper<Transform> tcm = new Mapper<Transform>(Transform, world);
+    Mapper<Weapon> wcm = new Mapper<Weapon>(Weapon, world);
 
-    velocity = vcm.get(player);
-    transform = tcm.get(player);
-    weapon = wcm.get(player);
-
-    window.onKeyDown.listen(handleKeyDown);
-    window.onKeyUp.listen(handleKeyUp);
-  }
-
-  void processSystem() {
-    if (keyPressed[FORWARD] == true) {
-      if (transform.y > 0) {
-        num untilMaxVelocity = velocity.max - velocity.value;
-        recalcVelocity(velocity.value + 0.1 * untilMaxVelocity);
-      }
-    } else {
-      velocity.x *= 0.995;
-      velocity.y *= 0.995;
-    }
-    if (keyPressed[TURN_RIGHT] == true) {
-      transform.orientation += 0.02;
-      recalcVelocity(velocity.value);
-    }
-    if (keyPressed[TURN_LEFT] == true) {
-      transform.orientation -= 0.02;
-      recalcVelocity(velocity.value);
-    }
-    if (keyPressed[SHOOT] == true) {
-      weapon.shoot = true;
-    } else {
-      weapon.shoot = false;
-    }
-    if (keyPressed[PAUSE1] == true || keyPressed[PAUSE2] == true) {
-      state.paused = true;
-    }
+    velocity = vcm[player];
+    transform = tcm[player];
+    weapon = wcm[player];
   }
 
   void recalcVelocity(double targetV) {
@@ -66,13 +36,35 @@ class PlayerControlSystem extends VoidEntitySystem {
     }
   }
 
-  void handleKeyDown(KeyboardEvent e) {
-    keyPressed[e.keyCode] = true;
-  }
-
-  void handleKeyUp(KeyboardEvent e) {
-    keyPressed[e.keyCode] = false;
-  }
-
   bool checkProcessing() => super.checkProcessing() && state.running;
+
+  @override
+  void processEntity(Entity entity) {
+
+    if (up) {
+      if (transform.y > 0) {
+        num untilMaxVelocity = velocity.max - velocity.value;
+        recalcVelocity(velocity.value + 0.1 * untilMaxVelocity);
+      }
+    } else {
+      velocity.x *= 0.995;
+      velocity.y *= 0.995;
+    }
+    if (right) {
+      transform.orientation += 0.02;
+      recalcVelocity(velocity.value);
+    }
+    if (left) {
+      transform.orientation -= 0.02;
+      recalcVelocity(velocity.value);
+    }
+    if (isPressed(SHOOT)) {
+      weapon.shoot = true;
+    } else {
+      weapon.shoot = false;
+    }
+    if (isPressed(PAUSE1) || isPressed(PAUSE2)) {
+      state.paused = true;
+    }
+  }
 }

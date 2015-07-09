@@ -20,8 +20,6 @@ const String PLAYER_COMPUTER = 'computer';
 const String GROUP_HUMAN_WEAPON = 'human_bullet';
 const String GROUP_COMPUTER_WEAPON = 'computer_bullet';
 
-final Random random = new Random();
-
 GameState state = new GameState();
 
 class GameState {

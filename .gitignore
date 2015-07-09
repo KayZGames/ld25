@@ -1,3 +1,6 @@
 /packages
 /web/packages
 build/
+.idea/
+.pub/
+.packages
